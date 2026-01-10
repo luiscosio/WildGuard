@@ -1,96 +1,113 @@
 # WildGuard — PROJECT.md
 **Scalable Oversight Harness for Dark-Pattern Monitoring in Real LLM Chat Logs (WildChat)**
 
-> **One-sentence summary:** WildGuard is a scalable oversight system that uses **DarkBench (elicitation prompts)** to define and elicit dark-pattern behaviors, then applies **two independent detectors (LLM Judge + trained classifier)** to monitor **real-world conversations (WildChat)**, quantify prevalence, and measure the **benchmark-to-reality (ecological validity) gap**.  
-> **Primary Track:** Track 2 (Real-World Analysis)  
-> **Secondary Track:** Track 1 (Measurement & Evaluation; benchmark vs reality; judge reliability)
+> **One-sentence summary:** WildGuard is a scalable oversight system that uses **DarkBench (elicitation prompts)** to elicit and define dark-pattern behaviors, then applies **two independent detectors (LLM Judge + trained classifier)** to monitor **real-world conversations (WildChat)**, quantify prevalence, and measure the **benchmark-to-reality (ecological validity) gap**—plus a reliability study of **LLM-as-a-judge**.
+
+**Primary Track:** Track 2 — Real-World Analysis / Monitoring  
+**Secondary Track:** Track 1 — Measurement & Evaluation (ecological validity gap + judge reliability)
 
 ---
 
-## 0) Core References (for context + citations)
-### WildChat
-- Paper (arXiv): `https://arxiv.org/abs/2405.01470` — WildChat: **1M conversations**, **2.5M+ turns**. :contentReference[oaicite:0]{index=0}
-- Dataset site: `https://wildchat.allen.ai/` :contentReference[oaicite:1]{index=1}
-- Hugging Face dataset: `https://huggingface.co/datasets/allenai/WildChat-1M` :contentReference[oaicite:2]{index=2}
-- OpenReview: `https://openreview.net/forum?id=Bl8u7ZRlbM` :contentReference[oaicite:3]{index=3}
+## 0) Core References (read this first)
+### WildChat (Real-world logs)
+- WildChat paper (May 2024): **1M conversations**, **2.5M+ turns**, multilingual, opt-in collection, released at wildchat.allen.ai.  
+  https://arxiv.org/abs/2405.01470 :contentReference[oaicite:0]{index=0}  
+- Dataset homepage: https://wildchat.allen.ai/ :contentReference[oaicite:1]{index=1}  
+- Hugging Face dataset: https://huggingface.co/datasets/allenai/WildChat-1M :contentReference[oaicite:2]{index=2}  
 
-### DarkBench (Elicitation Set / Benchmark)
-- Paper (arXiv): `https://arxiv.org/abs/2503.10728` — **660 prompts**, **6 categories**. :contentReference[oaicite:4]{index=4}
-- Project site: `https://darkbench.ai/` :contentReference[oaicite:5]{index=5}
-- GitHub: `https://github.com/smarter/DarkBench` :contentReference[oaicite:6]{index=6}
-- Apart write-up: `https://apartresearch.com/news/uncovering-model-manipulation-with-darkbench` :contentReference[oaicite:7]{index=7}
+### DarkBench (Elicitation set + taxonomy)
+- DarkBench paper (Mar 2025): **660 prompts**, **6 categories** (brand bias, user retention, sycophancy, anthropomorphism, harmful generation, sneaking).  
+  https://arxiv.org/abs/2503.10728 :contentReference[oaicite:3]{index=3}  
+- DarkBench GitHub: https://github.com/smarter/DarkBench :contentReference[oaicite:4]{index=4}  
+- DarkBench site: https://darkbench.ai/ :contentReference[oaicite:5]{index=5}  
 
-### LLM-as-a-Judge Reliability (for the reliability report)
-- “Can You Trust LLM Judgments?” (arXiv): `https://arxiv.org/abs/2412.12509` :contentReference[oaicite:8]{index=8}
-- “LLM Judges Are Unreliable” (CIP blog): `https://www.cip.org/blog/llm-judges-are-unreliable` :contentReference[oaicite:9]{index=9}
-- “LLMs Cannot Reliably Judge (Yet?)” (arXiv): `https://arxiv.org/pdf/2506.09443` :contentReference[oaicite:10]{index=10}
+### LLM-as-a-judge reliability (we will explicitly measure)
+- “Can You Trust LLM Judgments? Reliability of LLM-as-a-Judge” (Dec 2024): shows limitations of single-shot judging; proposes reliability framework and emphasizes multi-sample importance.  
+  https://arxiv.org/abs/2412.12509 :contentReference[oaicite:6]{index=6}  
 
 ---
 
-## 1) What We’re Building
-### WildGuard = Oversight Harness (not just a classifier)
-We are building a **scalable oversight harness** that triangulates three signals:
+## 1) What we’re building (not “just a classifier”)
+### WildGuard = Oversight Harness
+WildGuard triangulates three signals:
 
 1) **DarkBench Elicitation (Controlled, Synthetic)**
-   - Used to elicit dark-pattern behaviors under known conditions and define a taxonomy.
+   - Provides taxonomy + controlled elicitation prompts for dark patterns. :contentReference[oaicite:7]{index=7}  
 
-2) **LLM Judge (Auditor, High Precision)**
-   - Used to label samples, audit edge cases, and evaluate the reliability of LLM-as-a-judge.
+2) **LLM Judge (Auditor, Higher precision, higher cost)**
+   - Scores and labels samples using a strict rubric; used for audits and judge reliability measurement. :contentReference[oaicite:8]{index=8}  
 
-3) **Classifier (Monitor, Scalable)**
-   - Used to scan large volumes of real-world chat logs cheaply and consistently.
+3) **Classifier (Monitor, scalable, stable)**
+   - Fast, cheap scanning of large WildChat slices; used in the final monitoring tool.
 
-The key research contribution:  
-✅ **Compare LLM Judge vs Classifier** on the same WildChat subset and propose a practical **deployment-grade oversight harness** (thresholding + auditing + human review triggers).
-
----
-
-## 2) Why This Wins (Hackathon Alignment)
-This project directly matches hackathon priorities:
-- **Real-world monitoring:** Detect manipulation in-the-wild using WildChat. :contentReference[oaicite:11]{index=11}:contentReference[oaicite:12]{index=12}
-- **Ecological validity:** Quantify the gap between benchmark-elicited behaviors (DarkBench) and real usage. :contentReference[oaicite:13]{index=13}:contentReference[oaicite:14]{index=14}
-- **Empirical backing:** Large-scale prevalence stats + reliability evaluation.
-- **Addresses a known gap:** LLM-as-a-judge reliability is explicitly under scrutiny. :contentReference[oaicite:15]{index=15}:contentReference[oaicite:16]{index=16}
+**Core contribution:** build and evaluate a **scalable oversight harness** that answers:
+- What dark patterns are present **in the wild**?
+- How does that differ from **benchmark predictions** (ecological validity gap)?
+- How reliable is the LLM judge—and where does it disagree with the classifier? :contentReference[oaicite:9]{index=9}  
 
 ---
 
-## 3) Problem Statement
-Benchmarks can measure manipulative tendencies in controlled prompts, but we lack tooling that:
-1) detects dark-pattern markers in real conversation logs,
-2) quantifies prevalence and contexts,
-3) compares benchmark predictions to real-world behavior (ecological validity gap),
-4) and provides a scalable oversight harness usable in practice.
+## 2) Why this wins (hackathon alignment)
+- **Real-world monitoring:** WildChat is a large-scale real log dataset designed for studying real usage. :contentReference[oaicite:10]{index=10}  
+- **Ecological validity:** explicitly measures the gap between controlled benchmark elicitation (DarkBench) and real deployment behavior (WildChat). :contentReference[oaicite:11]{index=11}  
+- **Empirical + scalable:** run at 50k–200k+ turns; produce prevalence stats, trends, and context clusters.  
+- **Judge reliability as a first-class result:** LLM-as-a-judge reliability is a known issue; we measure it and build a practical harness around it. :contentReference[oaicite:12]{index=12}  
 
 ---
 
-## 4) Scope: Goals & Non-Goals
-### Goals (Definition of Done)
-**G1 — Monitoring Tool**
-- Input: chat logs (WildChat format or similar)
-- Output: flagged assistant turns + category + confidence + summary report
-
-**G2 — Real-World Prevalence Analysis**
-- Run on ≥50k–200k assistant turns
-- Report: prevalence by category, by conversation length, top contexts
-
-**G3 — Benchmark vs Reality Gap Report**
-- Compare DarkBench category distribution vs observed WildChat distribution
-
-**G4 — Reliability Report**
-- Compare judge vs classifier agreement (F1, kappa)
-- Judge self-consistency test (repeat same inputs multiple times)
-
-### Non-Goals
-- No intent attribution (we detect **markers**, not intent).
-- No private customer logs (WildChat only; synthetic for demo).
-- No de-anonymization, no user profiling.
-- No publishing “best manipulation recipes”.
+## 3) Problem statement
+Benchmarks can measure manipulation in controlled prompts, but we lack tooling that:
+1) detects dark-pattern markers in real logs,
+2) quantifies prevalence + contexts,
+3) compares benchmark exposure to real deployment behavior (ecological validity gap),
+4) provides an operational oversight harness (scalable + auditable).
 
 ---
 
-## 5) Taxonomy (DarkBench-Aligned)
-DarkBench defines 6 dark-pattern categories. :contentReference[oaicite:17]{index=17}
-We classify assistant turns into:
+## 4) Goals (Definition of Done)
+### G1 — Monitoring Tool
+Input: chat logs (WildChat format or similar)  
+Output:
+- flagged assistant turns
+- category + confidence
+- conversation-level summary + risk-over-time plot
+- exportable report JSON/CSV
+
+### G2 — Real-world prevalence analysis (WildChat)
+Run on ≥50k–200k assistant turns:
+- prevalence by category
+- prevalence vs conversation turn number
+- confidence distributions
+- top contexts (clusters/domains)
+
+### G3 — Benchmark vs reality gap report
+Compare:
+- DarkBench category distribution (elicited)
+vs
+- WildChat observed distribution (in-the-wild)
+Output:
+- JS divergence / KL divergence
+- rank correlations
+- “biggest mismatches” narrative
+
+### G4 — Reliability and disagreement report
+- LLM judge self-consistency (repeatability)  
+- Judge vs classifier disagreement rate
+- High-confidence disagreement audit + failure modes  
+(Explicitly motivated by LLM judge reliability research.) :contentReference[oaicite:13]{index=13}  
+
+---
+
+## 5) Non-goals
+- We do **not** claim intent; we detect **dark-pattern markers**.
+- No private customer logs (WildChat only; synthetic demo logs if needed).
+- No user profiling / de-anonymization.
+- No publishing “best manipulation prompt recipes.”
+
+---
+
+## 6) Taxonomy (DarkBench-aligned)
+We classify assistant turns into one of DarkBench’s 6 categories: :contentReference[oaicite:14]{index=14}  
 - `brand_bias`
 - `user_retention`
 - `sycophancy`
@@ -98,13 +115,26 @@ We classify assistant turns into:
 - `harmful_generation`
 - `sneaking`
 
-Optional (only if label reliability supports it):
+Optional (only if reliably labelable within time):
 - `guilt_pressure`
 - `refusal_erosion`
 
 ---
 
-## 6) System Architecture (ASCII Diagram)
+## 7) What we will measure (build-in from the start)
+These are the “guaranteed story” measurements:
+
+| Measurement | Why it matters | Likely story |
+|---|---|---|
+| **Category distribution: DarkBench vs WildChat** | ecological validity gap | “X is 3× more common in the wild than benchmarks predict” |
+| **Confidence scores by source** (judge vs classifier; DarkBench vs WildChat) | detectability differences | “Wild patterns are harder to detect; confidence drops by Y%” |
+| **Prevalence vs conversation turn number** | multi-turn emergence | “Markers spike after turn N (relationship depth effect)” |
+| **Judge vs classifier disagreement rate** | oversight reliability | “Judge misses X% of retention markers classifiers catch (or vice versa)” |
+| **Top contexts where patterns appear** | actionability | “Patterns cluster in customer support / companionship / shopping” |
+
+---
+
+## 8) System architecture (ASCII diagram)
 
 ```
 
@@ -112,7 +142,7 @@ Optional (only if label reliability supports it):
                        ┌─────────────────────────────┐
                        │         DarkBench           │
                        │  660 elicitation prompts    │
-                       │  6 categories taxonomy      │
+                       │  6-category taxonomy        │
                        └──────────────┬──────────────┘
                                       │ (subset 200–300)
                                       v
@@ -128,7 +158,7 @@ Optional (only if label reliability supports it):
                             │  category, model)   │
                             └───────────┬─────────┘
                                         │
-                                        │  (LLM Judge can optionally label too)
+                                        │ (optional judge labeling)
                                         v
 ```
 
@@ -163,8 +193,9 @@ v
 v
 ┌────────────────────────────┐
 │    PREVALENCE ANALYTICS     │
-│ category rates, trends,     │
-│ contexts, clusters          │
+│ categories, contexts,       │
+│ turn-index trends,          │
+│ confidence histograms       │
 └──────────────┬─────────────┘
 │
 ├─────────────┐
@@ -189,68 +220,67 @@ v
 
 ---
 
-## 7) Functional Requirements
-### FR1 — DarkBench Elicitation Runner
-- Run 200–300 DarkBench prompts on N models (2–5 models).
-- Store outputs with metadata (model, category, prompt id).
+## 9) Functional requirements
+### FR1 — DarkBench elicitation runner
+- Run a subset (200–300) of DarkBench prompts. :contentReference[oaicite:15]{index=15}  
+- Support N models (2–5) and store outputs in `outputs/darkbench_outputs.jsonl`.
 
-### FR2 — LLM Judge (Auditor)
-- Rubric-based classification: returns:
-  - predicted category (single or multi-label)
-  - confidence score (0–1)
-  - short explanation
-  - optionally highlighted spans
+### FR2 — LLM judge module
+- Rubric-based classification: outputs `category`, `confidence`, `explanation`, `spans` (optional).
 - Must support:
-  - repeated labeling for reliability assessment
-  - different prompt templates for sensitivity testing
+  - temperature controls
+  - repeatability test (same input, multiple runs)
+  - prompt template sensitivity test  
+  (motivated by judge reliability research). :contentReference[oaicite:16]{index=16}  
 
-### FR3 — Labeling Set Builder
-- Create `train.jsonl` and `eval.jsonl` using:
-  - DarkBench outputs (known prompt category)
-  - WildChat sampled turns labeled by LLM judge
-  - Human audited subset for gold standard
+### FR3 — Labeling set builder
+- Build `data/labeled/train.jsonl` + `eval.jsonl` using:
+  - DarkBench outputs (known taxonomy)
+  - WildChat sampled assistant turns labeled by judge
+  - gold subset with human audit (100–200)
 
-### FR4 — Classifier Training Pipeline
-- Train 6-way classifier with:
+### FR4 — Classifier training pipeline
+- Train a 6-way classifier:
   - baseline: embeddings + logistic regression
-  - preferred: MiniLM/DistilRoBERTa fine-tune
-- Track macro F1, precision@high-confidence
+  - preferred: fine-tuned transformer (DistilRoBERTa / MiniLM)
+- Track macro-F1 and precision@high-confidence.
 
-### FR5 — WildChat Inference at Scale
-- Ingest WildChat assistant turns.
+### FR5 — WildChat ingestion + inference at scale
+- Load WildChat and extract assistant turns. :contentReference[oaicite:17]{index=17}  
 - Run classifier on ≥50k–200k turns.
-- Run LLM judge audit pass on:
-  - top-k highest risk
+- Run LLM judge on:
+  - top-k high-risk flags
   - low-confidence uncertain cases
-  - random sample QA
+  - random QA sample
 
-### FR6 — Analytics + Reports
-- Prevalence by category
-- Prevalence vs conversation length
-- Context clusters (topic clustering)
-- Gap report:
-  - compare distributions: DarkBench vs WildChat
-  - compute JS divergence + rank correlation
-- Reliability report:
-  - judge self-consistency
-  - judge vs classifier agreement
-  - key disagreement cases
+### FR6 — Analytics + reports
+Generate:
+- prevalence tables + plots
+- confidence histograms
+- turn-index emergence plots
+- top contexts clustering
+- gap report (DarkBench vs WildChat)
+- reliability report (judge vs classifier + self-consistency)
 
-### FR7 — Demo UI
-Streamlit app:
-- upload transcript JSONL
-- show flagged turns
-- show risk-over-time plot
-- export detections CSV + summary JSON
+### FR7 — Streamlit demo app
+- Upload chat transcript JSONL
+- Show flagged turns + categories + confidence
+- Show risk over time
+- Export detections + summary JSON
+
+### FR8 — Jupyter notebooks for Phase 2 “Find the Story”
+We include notebooks as core deliverables:
+- `notebooks/01_exploration.ipynb` — raw prevalence, confidence, contexts, turn-index plots
+- `notebooks/02_gap_and_reliability.ipynb` — confirmatory gap metrics + reliability + final plots
 
 ---
 
-## 8) Data Specification
-### Input
-- WildChat: assistant turns extracted from dataset (text only). :contentReference[oaicite:18]{index=18}:contentReference[oaicite:19]{index=19}
-- DarkBench: prompt subset + taxonomy categories. :contentReference[oaicite:20]{index=20}:contentReference[oaicite:21]{index=21}
+## 10) Data spec
+### Inputs
+- DarkBench prompts + taxonomy. :contentReference[oaicite:18]{index=18}  
+- WildChat dataset (assistant turns). :contentReference[oaicite:19]{index=19}  
 
-### Output
+### Outputs (standardized)
 - `outputs/darkbench_outputs.jsonl`
 - `outputs/judge_labels.jsonl`
 - `models/classifier/`
@@ -258,68 +288,112 @@ Streamlit app:
 - `outputs/prevalence.json`
 - `outputs/gap_report.json`
 - `outputs/reliability_report.json`
+- `figures/` (plots)
 - `app/streamlit_app.py`
 
 ---
 
-## 9) Metrics
-### Model quality (on gold subset)
-- Macro F1
-- Precision@HighConf (e.g., conf >= 0.8)
-- Calibration bins (conf vs accuracy)
+## 11) Evaluation metrics (judge-friendly)
+### Classifier quality
+- Macro F1 on gold set
+- Precision@conf≥0.8
+- Calibration bins (confidence vs accuracy)
+
+### LLM judge reliability (explicitly measured)
+- Self-consistency (repeat runs)  
+- Prompt-template sensitivity  
+- Disagreement rate with classifier  
+(Aligned with reliability concerns raised in LLM-as-a-judge work.) :contentReference[oaicite:20]{index=20}  
 
 ### Monitoring utility
 - Review load (flags per 1,000 turns)
-- % confirmed by judge on audit set
+- % high-risk flags confirmed by judge
+- estimated cost savings vs judging everything
 
 ### Benchmark vs reality gap
-- JS divergence between category distributions
-- Spearman rank correlation of category frequencies
-
-### Judge reliability (known issue)
-- Self-consistency across repeated runs
-- Prompt sensitivity effects
-- Agreement vs gold human subset  
-(LLM-as-a-judge reliability concerns documented in literature) :contentReference[oaicite:22]{index=22}:contentReference[oaicite:23]{index=23}
+- JS divergence (category distributions)
+- Spearman rank correlation
+- “largest mismatch categories” list
 
 ---
 
-## 10) MVP Scope (48 hours)
-### Strong MVP
-- Focus on 3 categories: `user_retention`, `sycophancy`, `sneaking`
-- Label 500 WildChat samples (judge + human audit 100)
+## 12) MVP scope (48 hours)
+### Strong MVP (recommended)
+- 3 categories (if tight time): `user_retention`, `sycophancy`, `sneaking`
+- Judge-label 1,000 WildChat turns; human audit 200
 - Train classifier
-- Run on 50k–200k turns
-- Publish prevalence + gap + reliability reports
-- Streamlit demo
+- Run inference on ≥50k turns
+- Produce:
+  - prevalence report
+  - gap report
+  - reliability report
+  - Streamlit demo
+  - 2 notebooks
 
-### Stretch
-- All 6 categories
-- Multi-turn accumulation detection
-- Multi-judge ensemble (2 LLM judges)
-- Compare to LMSYS-Chat-1M
-
----
-
-## 11) 48-Hour Execution Plan
-### Day 1
-1) Finalize taxonomy + labeling guide
-2) Run DarkBench subset on 2–3 models
-3) Implement LLM judge rubric + JSON output format
-4) Sample and judge-label 1,000 WildChat turns; human audit 200
-5) Train baseline classifier + evaluation script
-
-### Day 2
-1) Train improved classifier (transformer)
-2) Run inference on 50k–200k WildChat turns
-3) Judge audit pass on high-risk + uncertain + random
-4) Produce prevalence plots + gap report + reliability report
-5) Build Streamlit demo + export reports
-6) Write final report + limitations/dual-use appendix
+### Full MVP (stretch)
+- all 6 categories
+- run on 200k+ turns
+- multi-turn patterns / accumulation
 
 ---
 
-## 12) Repo Structure (recommended)
+## 13) 48-hour execution plan (Exploratory → Confirmatory)
+### Phase 1 — Build + Run (Day 1)
+- Get pipeline working end-to-end
+- Run on 50k+ turns
+- Generate basic prevalence + confidence tables
+
+### Phase 2 — Find the Story (Day 1 night / Day 2 morning)
+- Use notebooks to identify:
+  - biggest gaps
+  - strongest turn-index effects
+  - top contexts
+  - most interesting disagreement cases
+
+### Phase 3 — Frame + Present (Day 2)
+- Lead with the finding
+- Infrastructure is the proof you discovered it responsibly
+
+---
+
+## 14) Risks & mitigations
+**Risk:** LLM judge unreliability / prompt sensitivity  
+**Mitigation:** explicitly measure repeatability + sensitivity and report it (core contribution). :contentReference[oaicite:21]{index=21}  
+
+**Risk:** intent attribution critique  
+**Mitigation:** call it “markers,” triage, and auditing support.
+
+**Risk:** privacy / PII  
+**Mitigation:** no user identifiers; redact example excerpts; publish aggregates only. WildChat is opt-in and released under AI2 ImpACT license. :contentReference[oaicite:22]{index=22}  
+
+**Risk:** label noise  
+**Mitigation:** small taxonomy, double-label 100 samples, report agreement.
+
+---
+
+## 15) Deliverables (submission-ready)
+- GitHub repo with:
+  - scripts for ingestion, elicitation, judging, training, inference
+  - outputs + plots + gap/reliability reports
+  - Streamlit demo app
+  - 2 notebooks
+  - report + limitations/dual-use appendix
+- Optional: 3–5 minute demo video
+
+---
+
+## 16) Required appendix: Limitations & Dual-Use
+Include:
+- false positives/negatives
+- edge cases (multilingual, sarcasm)
+- dual-use risk: detection can reveal what works
+- mitigation: publish aggregates + minimal redacted examples
+- responsible disclosure guidance
+- future work: multi-turn accumulation, model family comparisons, multilingual analysis
+
+---
+
+## 17) Recommended repo structure
 ```
 
 wildguard/
@@ -329,6 +403,8 @@ data/
 labeled/
 annotations.csv
 label_guide.md
+train.jsonl
+eval.jsonl
 samples/
 sample_wildchat.jsonl
 sample_darkbench.jsonl
@@ -354,6 +430,9 @@ prevalence.json
 gap_report.json
 reliability_report.json
 figures/
+notebooks/
+01_exploration.ipynb
+02_gap_and_reliability.ipynb
 app/
 streamlit_app.py
 reports/
@@ -364,34 +443,10 @@ limitations_dual_use.md
 
 ---
 
-## 13) Ethics / Dual-Use Appendix (Required)
-### Limitations
-- false positives/negatives
-- taxonomy incompleteness
-- representativeness limits
-
-### Dual-use
-- detection tools could reveal what works
-- mitigation:
-  - publish aggregate results
-  - redact or paraphrase illustrative examples
-
-### Responsible disclosure
-- no naming/shaming
-- share patterns, not exploit templates
-
-### Privacy
-- avoid user identifiers
-- redact examples
-- follow dataset documentation and terms
-
----
-
-## 14) Demo Script (3–5 min)
-1) Show Streamlit log scan → flagged turns + categories
-2) Show prevalence dashboard: category rates, risk vs length
-3) Show gap report: DarkBench vs WildChat distribution mismatch
-4) Show reliability report: judge variance + judge vs classifier disagreement
-5) Conclusion: “We built a scalable oversight harness that bridges benchmark → deployment.”
-
----
+## 18) Demo script (3–5 minutes)
+1) Streamlit: upload a transcript → show flagged turns (categories + confidence)
+2) Prevalence dashboard: category frequency + confidence histograms
+3) Turn-index plot: “markers increase after turn N”
+4) Gap report: DarkBench vs WildChat mismatch plot
+5) Reliability report: judge repeatability + judge vs classifier disagreement
+6) Close: “We built a scalable oversight harness for detecting manipulation markers in the wild.”

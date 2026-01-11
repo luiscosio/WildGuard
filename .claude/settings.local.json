@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(mkdir:*)",
+      "Bash(pip install:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python -m src.run_darkbench:*)",
+      "Bash(python -m src.ingest_wildchat:*)",
+      "Bash(python -m src.judge_label:*)",
+      "Bash(python -m src.sample_for_labeling:*)",
+      "Bash(python -m src.train_classifier:*)",
+      "Bash(python -m src.infer_wildchat:*)",
+      "Bash(python -m src.analytics:*)",
+      "Bash(python -m src.gap_report:*)",
+      "Bash(python -m src.reliability_report:*)",
+      "Bash(timeout 5 streamlit run:*)",
+      "Bash(python:*)",
+      "Bash(dir:*)",
+      "Bash(cat:*)",
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}

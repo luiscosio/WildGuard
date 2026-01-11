@@ -513,7 +513,7 @@ Early Flag Analysis (turns 1-3):
   Difference: +5.5% longer (t-test p = 0.036)
 ```
 
-**Key finding:** Conversations with early dark patterns are **5.5% longer** on average. The correlation between flag count and conversation length (r=0.14) is weak but statistically significant. This suggests some relationship between dark patterns and engagement, though the effect size is modest with V5's more precise detector.
+**Key finding:** Conversations with early dark patterns are **5.5% longer** on average. The correlation between flag count and conversation length (r=0.14) is weak but statistically significant. This suggests some relationship between dark patterns and engagement.
 
 
 ## Chapter 9: Validation

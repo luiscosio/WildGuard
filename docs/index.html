@@ -916,20 +916,34 @@
 
         /* ===== MOBILE - SINGLE PAGE VIEW ===== */
         @media (max-width: 768px) {
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                overflow-y: auto !important;
+            }
+
             .scene {
                 perspective: none;
+                height: auto !important;
+                min-height: 100vh;
+                overflow: visible !important;
             }
 
             .book-wrapper {
                 width: 95vw;
                 max-width: 500px;
-                height: 85vh;
+                height: auto !important;
+                min-height: 90vh;
                 max-height: none;
             }
 
             .book {
                 transform: none !important;
                 transform-style: flat;
+                height: auto !important;
+                overflow: visible !important;
             }
 
             /* Hide book spine shadow on mobile */
@@ -946,12 +960,18 @@
                 display: none !important;
             }
 
-            /* Cover takes full width on mobile */
+            /* Cover takes full width on mobile and fills screen */
             .cover-left {
                 width: 100% !important;
                 border-radius: 12px !important;
                 left: 0 !important;
                 justify-content: center !important;
+                position: relative !important;
+                min-height: 90vh !important;
+                margin-bottom: 15px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
             }
 
             .cover-left h1 {
@@ -979,25 +999,58 @@
             .pages-container {
                 width: 100% !important;
                 left: 0 !important;
+                overflow: visible !important;
+                height: auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0 !important;
             }
 
+            /* Each page container in mobile */
             .page {
                 width: 100% !important;
                 transform-origin: center center !important;
+                height: auto !important;
+                position: relative !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0 !important;
+                transform: none !important;
             }
 
+            /* Hide flipped pages completely */
             .page.flipped {
-                transform: translateX(-100%) !important;
-                opacity: 0;
-                pointer-events: none;
+                display: none !important;
             }
 
+            /* Each face takes full screen */
             .page-face {
                 border-radius: 12px !important;
-                padding: 20px !important;
+                padding: 25px 20px !important;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-                /* Center content vertically on mobile */
+                position: relative !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 90vh !important;
+                display: flex !important;
+                flex-direction: column !important;
                 justify-content: center !important;
+                margin-bottom: 15px !important;
+                background: var(--paper) !important;
+            }
+
+            /* Make page-header part of centered content */
+            .page-header {
+                position: relative !important;
+                margin-bottom: 1rem !important;
+            }
+
+            /* Make both front and back visible in mobile */
+            .page-front,
+            .page-back {
+                position: relative !important;
+                transform: none !important;
+                backface-visibility: visible !important;
             }
 
             /* Remove ALL inset shadows that simulate page binding */
@@ -1015,17 +1068,20 @@
                 display: none !important;
             }
 
-            /* Hide page back on mobile - only show front */
+            /* Show BOTH faces on mobile - back is visible after front */
             .page-back {
-                display: none !important;
+                display: flex !important;
+                position: relative !important;
             }
 
-            /* Center page content vertically */
+            /* Center page content */
             .page-content {
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
-                flex: 1;
+                justify-content: flex-start;
+                flex: 0 1 auto;
+                overflow-y: visible;
+                max-height: none;
             }
 
             /* Back cover full width and centered */
@@ -1038,6 +1094,9 @@
                 flex-direction: column !important;
                 justify-content: center !important;
                 align-items: center !important;
+                position: relative !important;
+                min-height: 90vh !important;
+                margin-top: 15px !important;
             }
 
             .back-cover h2 {
@@ -1132,7 +1191,7 @@
                 font-size: 0.7rem !important;
             }
 
-            /* Navigation bigger touch targets */
+            /* Navigation - hide dots on mobile, keep buttons for easier navigation */
             .nav-container {
                 padding: 15px 20px !important;
             }
@@ -1143,9 +1202,9 @@
                 font-size: 1.5rem !important;
             }
 
-            .page-dot {
-                width: 10px !important;
-                height: 10px !important;
+            .page-dots {
+                display: none !important;
+            }
             }
 
             /* Metric boxes mobile */
@@ -1220,7 +1279,7 @@
                 <!-- Back Cover (visible when all pages flipped) -->
                 <div class="back-cover" id="backCover">
                     <h2>🎉 Thank You!</h2>
-                    <p style="font-size: 1.1rem;">Built for AI Safety Hackathon 2025</p>
+                    <p style="font-size: 1.1rem;">Built for Apart Research AI Manipulation Hackathon</p>
                     <p style="margin-top: 0.5rem; font-size: 1rem;"><strong>Team DarkPatternMonitor</strong><br>Fernando · Godric · Ricardo · Luis</p>
                     <div class="back-links" style="margin-top: 1.5rem;">
                         <a href="https://github.com/luiscosio/WildGuard" target="_blank" class="back-link" onclick="event.stopPropagation()">📂 GitHub</a>

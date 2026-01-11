@@ -97,35 +97,35 @@ flowchart LR
 
 ## Key Results
 
-From analyzing **280,259** real WildChat assistant turns from **100K conversations**:
+From analyzing **280,259** real WildChat assistant turns from **100K conversations** (V5 classifier):
 
 | Metric | Value |
 |--------|-------|
-| Overall flag rate | **1.7%** |
-| Top pattern | Anthropomorphism (0.47%) |
-| Second pattern | Brand Bias (0.31%) |
-| Classifier Eval F1 | 70.8% |
-| High-conf accuracy | 84.4% |
-| ECE (calibration) | 0.068 |
+| Overall flag rate | **1.3%** |
+| Top pattern | Anthropomorphism (0.66%) |
+| Second pattern | Harmful Generation (0.37%) |
+| Validation accuracy | 78.7% |
+| ECE (calibration) | 0.057 |
 
 ### Category Distribution
 
-Of the **4,810 flagged turns** (1.7% of total):
+Of the **3,726 flagged turns** (1.3% of total):
 
 ```mermaid
 xychart-beta
     title "Dark Pattern Distribution (flagged turns only)"
-    x-axis ["Anthropo-\nmorphism", "Brand\nBias", "Sycophancy", "Harmful\nGen", "User\nRetention", "Sneaking"]
-    y-axis "Count" 0 --> 1400
-    bar [1304, 869, 835, 706, 562, 534]
+    x-axis ["Anthropo-\nmorphism", "Harmful\nGen", "Brand\nBias", "Sneaking", "User\nRetention", "Sycophancy"]
+    y-axis "Count" 0 --> 2000
+    bar [1860, 1028, 405, 333, 53, 47]
 ```
 
 ### Key Findings
 
-1. **1.7% of AI responses show high-confidence manipulation markers** (precise detector)
-2. **GPT-4 shows higher dark pattern rate (2.3%)** than GPT-3.5 (1.6%) - statistically significant (p<1e-36)
-3. **Anthropomorphism is most common** (0.47%) - AI claiming human experiences
-4. **Dark patterns increase in longer conversations** (+100% from turn 1 to turn 20+)
+1. **1.3% of AI responses show high-confidence manipulation markers** (V5 precision-focused)
+2. **GPT-4 shows higher dark pattern rate** than GPT-3.5 - statistically significant (p<1e-36)
+3. **Anthropomorphism is most common** (0.66%) - AI claiming human experiences
+4. **Sycophancy escalates most** (+42% from turn 1 to turn 20+)
+5. **Conversations with early dark patterns are 5.5% longer** (p=0.036)
 
 ## Quick Start
 

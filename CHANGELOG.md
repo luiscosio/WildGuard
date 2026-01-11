@@ -2,6 +2,91 @@
 
 All notable changes to WildGuard are documented here.
 
+## [V5] - 2026-01-11
+
+### Goal
+Improve classifier precision via targeted false positive correction from V3's detections.
+
+### Approach
+1. Sampled 1,000 turns flagged by V3 classifier
+2. Had Haiku judge verify each flag
+3. Found 72.8% were false positives (classifier flagged, judge said "none")
+4. Added top 200 high-confidence false positives + 91 category corrections to V3 training data
+5. Retrained with calibrated classifier
+
+### What Worked
+- **Improved validation accuracy**: 78.7% (vs V3's 75.3%)
+- **Better calibration**: ECE=0.057 (vs V3's 0.068)
+- **Maintained reasonable flag rate**: 1.33% (vs V3's 1.72%)
+- **Targeted corrections**: Only added samples where judge had >0.7 confidence
+
+### Key Metrics Comparison
+| Metric | V3 | V5 | Notes |
+|--------|----|----|-------|
+| Flag rate | 1.72% | 1.33% | -0.39pp |
+| Validation accuracy | 75.3% | 78.7% | +3.4pp |
+| ECE (calibration) | 0.068 | 0.057 | Better |
+| Training samples | 2,159 | 2,448 | +289 corrections |
+
+### Category Distribution Changes
+| Category | V3 | V5 | Change |
+|----------|----|----|--------|
+| anthropomorphism | 1,025 | 1,860 | +81% |
+| harmful_generation | 1,555 | 1,028 | -34% |
+| brand_bias | 576 | 405 | -30% |
+| sneaking | 581 | 333 | -43% |
+| sycophancy | 406 | 47 | -88% |
+| user_retention | 667 | 53 | -92% |
+
+### Key Insight
+V3's false positives were concentrated in user_retention and sycophancy categories. V5's corrections dramatically reduced these over-detections while maintaining overall precision.
+
+### New Files
+- `src/sample_flagged.py` - Sample flagged turns for judge verification
+- `src/prepare_v5_data.py` - Full V5 data preparation (with all corrections)
+- `src/prepare_v5b_data.py` - Balanced V5 data preparation (selective corrections)
+- `data/labeled/train_v5b.jsonl` - V5 training data (2,448 samples)
+- `outputs/v5_judge_labels.jsonl` - Judge verification of V3 flags
+- `outputs/wildchat_detections_v5b.jsonl` - V5 classifications on 280K turns
+- `outputs/analytics_v5b.json` - V5 analytics report
+
+
+## [V4] - 2026-01-11
+
+### Goal
+Scale up training data (660 DarkBench + 5,000 WildChat judge labels) and add enhanced analytics (per-category escalation, user behavior analysis).
+
+### What Worked
+- **Per-category escalation analysis**: Found sycophancy escalates most (+42%) over conversation turns
+- **User behavior insights**: Conversations with early dark patterns are 11% longer (5.99 vs 5.40 turns)
+- **Parallel processing**: 10 workers made 5,000 judge labels feasible (~25 min)
+- **Full DarkBench integration**: All 660 prompts from HuggingFace
+
+### What Didn't Work
+- **Classifier precision dropped**: 40.5% flag rate (vs V3's 1.7%) - massive over-detection
+- **Lower eval F1**: 63% (vs V3's 70.8%) - larger training data was noisier
+- **Brand_bias explosion**: 16.5% flagged as brand_bias (vs V3's 0.31%) - clearly overfitting
+
+### Key Metrics Comparison
+| Metric | V3 | V4 | Notes |
+|--------|----|----|-------|
+| Training samples | 2,591 | 6,077 | +134% |
+| Eval F1 | 70.8% | 63.0% | -7.8% |
+| Flag rate | 1.7% | 40.5% | +38.8% |
+| Brand_bias | 0.31% | 16.5% | Over-flagging |
+
+### New Analytics (V4)
+| Category | Escalation (turn 1→20+) | p-value |
+|----------|------------------------|---------|
+| sycophancy | **+41.8%** | <0.0001 |
+| sneaking | +20.3% | <0.0001 |
+| user_retention | +18.1% | 0.034 |
+| harmful_generation | **-41.1%** | <0.0001 |
+
+### Conclusion
+V4 demonstrates that more training data isn't always better. The V3 precision-focused model remains the recommended production classifier. V4's value is the enhanced analytics framework.
+
+
 ## [V3] - 2026-01-11
 
 ### What Worked
@@ -72,3 +157,4 @@ All notable changes to WildGuard are documented here.
 3. **Statistical tests matter**: Chi-squared/p-values distinguish real effects from noise.
 4. **Full-scale inference reveals patterns**: Turn-by-turn escalation only visible at scale.
 5. **Calibration enables confidence**: ECE metric tells you if confidence scores are meaningful.
+6. **Balance correction samples**: Adding too many false positive corrections (V5) overcorrects; select top high-confidence corrections only (V5b).

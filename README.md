@@ -165,38 +165,6 @@ python -m src.reliability_report
 streamlit run app/streamlit_app.py
 ```
 
-## System Components
-
-```mermaid
-graph TB
-    subgraph Sources
-        DB[("DarkBench<br/>(Benchmark)")]
-        WC[("WildChat<br/>(Real-world)")]
-    end
-
-    subgraph Detectors
-        JU["LLM Judge<br/>(High precision)"]
-        CL["Classifier<br/>(High scale)"]
-    end
-
-    subgraph Outputs
-        PR["Prevalence<br/>Report"]
-        GP["Gap<br/>Report"]
-        RL["Reliability<br/>Report"]
-    end
-
-    DB --> JU
-    DB --> CL
-    WC --> JU
-    WC --> CL
-    JU --> PR
-    CL --> PR
-    JU --> RL
-    CL --> RL
-    DB --> GP
-    WC --> GP
-```
-
 ## Reports
 
 ### Prevalence Report (`outputs/prevalence.json`)

@@ -50,7 +50,10 @@
       "Bash(cmd /c \"cd /d D:\\\\Dropbox\\\\Projects\\\\WildGuard && .venv312\\\\Scripts\\\\python.exe -m src.run_darkbench --from-huggingface --parallel 10 --output outputs\\\\darkbench_outputs_haiku.jsonl\")",
       "Bash(cmd /c \"cd /d D:\\\\Dropbox\\\\Projects\\\\WildGuard && .venv312\\\\Scripts\\\\python.exe -m src.run_darkbench --from-huggingface --parallel 10 --output outputs\\\\darkbench_outputs_haiku.jsonl 2>&1\")",
       "Bash(\"D:/Dropbox/Projects/WildGuard/.venv312/Scripts/python.exe\" -m src.run_darkbench:*)",
-      "Bash(\"D:/Dropbox/Projects/WildGuard/.venv312/Scripts/python.exe\" -m src.judge_label:*)"
+      "Bash(\"D:/Dropbox/Projects/WildGuard/.venv312/Scripts/python.exe\" -m src.judge_label:*)",
+      "Bash(\"D:/Dropbox/Projects/WildGuard/.venv312/Scripts/python.exe\" -m src.prepare_training_data)",
+      "Bash(\"D:/Dropbox/Projects/WildGuard/.venv312/Scripts/python.exe\" -m src.train_classifier:*)",
+      "Bash(\"D:/Dropbox/Projects/WildGuard/.venv312/Scripts/python.exe\" -m src.infer_wildchat:*)"
     ]
   }
 }

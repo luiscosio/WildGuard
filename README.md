@@ -1,6 +1,6 @@
 # DarkPatternMonitor
 
-**Scalable Oversight Harness for Dark-Pattern Monitoring in Real LLM Chat Logs**
+**Detecting and measuring manipulative AI behaviors in the wild.**
 
 DarkPatternMonitor detects manipulation patterns ("dark patterns") in AI assistant responses at scale. It combines benchmark-driven elicitation with real-world monitoring to answer: *What manipulation behaviors actually occur in production LLM conversations?*
 

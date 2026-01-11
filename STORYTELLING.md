@@ -4,9 +4,9 @@
 
 **Do AI assistants manipulate users?**
 
-We set out to answer this question by analyzing 100,000 real conversations between humans and ChatGPT. Not synthetic tests - real conversations from real users.
+We set out to answer this question by analyzing 100,000 real conversations between humans and ChatGPT. Not synthetic tests, real conversations from real users.
 
-> **Note:** For a detailed history of our experiments and what worked/didn't work, see [CHANGELOG.md](CHANGELOG.md).
+> **Note:** Highly recommended to see our [website first](https://wildguard.luiscos.io/) and for a detailed history of our experiments and what worked/didn't work, see [CHANGELOG.md](CHANGELOG.md).
 
 
 ## Chapter 2: The Data Sources

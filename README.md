@@ -4,7 +4,7 @@
 
 WildGuard detects manipulation patterns ("dark patterns") in AI assistant responses at scale. It combines benchmark-driven elicitation with real-world monitoring to answer: *What manipulation behaviors actually occur in production LLM conversations?*
 
-> **Documentation:** Highly recommended to see our [website first](https://wildguard.luiscos.io/), then [STORYTELLING.md](STORYTELLING.md) for the full narrative and methodology. See [CHANGELOG.md](CHANGELOG.md) for experiment history.
+> **Note:** Highly recommended to see our [website first](https://wildguard.luiscos.io/), then [STORYTELLING.md](STORYTELLING.md) for the full narrative and methodology. See [CHANGELOG.md](CHANGELOG.md) for experiment history.
 
 ## What is WildGuard?
 
@@ -110,15 +110,14 @@ From analyzing **280,259** real WildChat assistant turns from **100K conversatio
 
 ### Category Distribution
 
+Of the **4,810 flagged turns** (1.7% of total):
+
 ```mermaid
-pie title Dark Patterns in WildChat (280,259 turns)
-    "None (Clean)" : 275449
-    "Anthropomorphism" : 1304
-    "Brand Bias" : 869
-    "Sycophancy" : 835
-    "Harmful Generation" : 706
-    "User Retention" : 562
-    "Sneaking" : 534
+xychart-beta
+    title "Dark Pattern Distribution (flagged turns only)"
+    x-axis ["Anthropo-\nmorphism", "Brand\nBias", "Sycophancy", "Harmful\nGen", "User\nRetention", "Sneaking"]
+    y-axis "Count" 0 --> 1400
+    bar [1304, 869, 835, 706, 562, 534]
 ```
 
 ### Key Findings
@@ -239,25 +238,6 @@ wildguard/
 │   └── classifier/           # Trained models
 ├── outputs/                  # Results and reports
 └── notebooks/                # Analysis notebooks
-```
-
-## Data Flow
-
-```mermaid
-sequenceDiagram
-    participant DB as DarkBench
-    participant WC as WildChat
-    participant JU as LLM Judge
-    participant CL as Classifier
-    participant AN as Analytics
-
-    DB->>CL: Training data (known labels)
-    WC->>JU: Sample for labeling
-    JU->>CL: Judge labels
-    CL->>CL: Train model
-    WC->>CL: All turns
-    CL->>AN: Detections
-    AN->>AN: Generate reports
 ```
 
 ## References

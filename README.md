@@ -273,10 +273,6 @@ sequenceDiagram
 - Some categories (sneaking, user_retention) have fewer training examples
 - LLM judge can be inconsistent across runs
 
-## License
-
-MIT License - See [LICENSE](LICENSE) for details.
-
 ---
 
 Built for the AI Manipulation Hackathon 2026 by Apart Research

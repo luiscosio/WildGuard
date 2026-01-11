@@ -335,35 +335,37 @@ errors:                23 (1.2%)   - Parse failures
 We combined:
 - **630** DarkBench elicitation outputs (known labels)
 - **1,961** High-confidence Judge-labeled WildChat samples (confidence > 0.7)
+- **289** False positive corrections (from cross-validation)
 
-Total: **2,591 training samples** (80% train / 20% eval)
+Total: **2,448 training samples** (90% train / 10% eval)
 
-### Classifier Comparison
+### False Positive Correction
 
-We tested multiple approaches:
+The key to high precision: we sampled 1,000 turns flagged by the classifier and had Claude Haiku verify each one:
 
-| Model | Train F1 | Eval F1 | Training Time |
-|-------|----------|---------|---------------|
-| MiniLM-L6-v2 + LogReg | 80.1% | 70.8% | ~1 min |
-| MPNet-base-v2 + LogReg | 79.9% | 67.2% | ~7 min |
-| DistilBERT (fine-tuned) | - | - | ~45 min (CPU) |
+```
+Judge verification results:
+  72.8% - False positives (classifier flagged, judge said "none")
+  11.0% - Exact matches (classifier and judge agreed)
+  16.2% - Category disagreements
+```
 
-**Selected:** MiniLM for speed (10x faster inference than MPNet)
+By adding top 200 high-confidence false positives + 91 category corrections to the training data, the classifier learned to avoid common false positive patterns.
 
 **Training results:**
 ```
-Train samples: 2,159
-Eval samples:  519
+Train samples: 2,448
+Eval samples:  607
 
-Train macro F1: 80.1%
-Eval macro F1:  70.8%
-High-confidence accuracy: 84.4%
+Validation accuracy: 78.7%
+ECE (calibration):   0.057
+High-conf accuracy:  87.9%
 ```
 
 The classifier learned to recognize patterns like:
-- Words like "I feel", "I appreciate", "makes me happy" -> anthropomorphism
-- Excessive use of "brilliant", "amazing", "incredible" -> sycophancy
-- Mentions of specific AI products -> brand_bias
+- Words like "I feel", "I appreciate", "makes me happy" → anthropomorphism
+- Excessive use of "brilliant", "amazing", "incredible" → sycophancy
+- Mentions of specific AI products → brand_bias
 
 
 ## Chapter 7: The Big Scan
@@ -420,19 +422,19 @@ Out of 280,259 assistant turns:
 +------------------------+-------+-------+-----------+
 | Category               | Count | Rate  | Per 1,000 |
 +------------------------+-------+-------+-----------+
-| anthropomorphism       | 1,304 | 0.47% |       4.7 |
-| brand_bias             |   869 | 0.31% |       3.1 |
-| sycophancy             |   835 | 0.30% |       3.0 |
-| harmful_generation     |   706 | 0.25% |       2.5 |
-| user_retention         |   562 | 0.20% |       2.0 |
-| sneaking               |   534 | 0.19% |       1.9 |
+| anthropomorphism       | 1,860 | 0.66% |       6.6 |
+| harmful_generation     | 1,028 | 0.37% |       3.7 |
+| brand_bias             |   405 | 0.14% |       1.4 |
+| sneaking               |   333 | 0.12% |       1.2 |
+| user_retention         |    53 | 0.02% |       0.2 |
+| sycophancy             |    47 | 0.02% |       0.2 |
 +------------------------+-------+-------+-----------+
-| TOTAL FLAGGED          | 4,810 |  1.7% |      17.2 |
-| Clean (none)           |275,449| 98.3% |     982.8 |
+| TOTAL FLAGGED          | 3,726 |  1.3% |      13.3 |
+| Clean (none)           |276,533| 98.7% |     986.7 |
 +------------------------+-------+-------+-----------+
 ```
 
-**Key finding:** **1.7%** of AI responses show high-confidence manipulation markers.
+**Key finding:** **1.3%** of AI responses show high-confidence manipulation markers.
 
 ### GPT-4 vs GPT-3.5
 
@@ -485,12 +487,33 @@ This is a key finding for AI safety: **monitoring should pay special attention t
 We validated the classifier's confidence scores:
 
 ```
-Expected Calibration Error (ECE): 0.068
-High-confidence (>0.7) accuracy: 75.3%
+Expected Calibration Error (ECE): 0.057
+High-confidence (>0.7) accuracy: 78.7%
 Samples validated: 150
 ```
 
-**Interpretation:** The classifier's confidence scores are reasonably well-calibrated - when it says 70%+ confident, it's correct ~75% of the time.
+**Interpretation:** The classifier's confidence scores are well-calibrated - when it says 70%+ confident, it's correct ~79% of the time.
+
+### User Behavior Analysis
+
+Do users who receive early dark patterns continue conversations longer?
+
+```
+Correlation Analysis:
+  Length vs Flag Count: r=0.14 (p < 0.001)
+  Length vs Flag Rate:  r=-0.01 (p = 0.006)
+
+Early Flag Analysis (turns 1-3):
+  Conversations with early flag: 1,825
+  Mean length: 2.99 turns
+
+  Conversations without early flag: 96,888
+  Mean length: 2.84 turns
+
+  Difference: +5.5% longer (t-test p = 0.036)
+```
+
+**Key finding:** Conversations with early dark patterns are **5.5% longer** on average. The correlation between flag count and conversation length (r=0.14) is weak but statistically significant. This suggests some relationship between dark patterns and engagement, though the effect size is modest with V5's more precise detector.
 
 
 ## Chapter 9: Validation
@@ -513,16 +536,10 @@ We compared DarkBench (synthetic benchmark) vs WildChat (real world):
 ### Is Our System Reliable?
 
 ```
-Classifier Eval F1:        70.8%
-High-conf accuracy:        84.4%
-ECE (calibration):         0.068
-Flag rate:                 1.7%
-
-Precision by category:
-  brand_bias:              0.95
-  user_retention:          0.91
-  sycophancy:              0.91
-  sneaking:                0.71
+Classifier Metrics:
+  Validation accuracy:     78.7%
+  ECE (calibration):       0.057
+  Flag rate:               1.3%
 
 Judge Haiku 4.5 Cost:      ~$0.001 per sample
 Training Time:             ~1 minute
@@ -530,6 +547,23 @@ Inference Speed:           ~5,000 samples/minute (CPU)
 ```
 
 **Interpretation:** The classifier is tuned for precision over recall - it flags only high-confidence cases, minimizing false positives.
+
+### Per-Category Escalation
+
+Not all dark patterns escalate equally. We measured how each category changes across conversation turns:
+
+```
+Category          | Turn 1-5 → Turn 20+ | p-value  | Interpretation
+------------------|---------------------|----------|----------------
+sycophancy        |      +42%           | <0.0001  | Escalates most
+sneaking          |      +20%           | <0.0001  | Moderate increase
+user_retention    |      +18%           |  0.034   | Moderate increase
+anthropomorphism  |       ~0%           | <0.0001  | Stable
+harmful_generation|      -41%           | <0.0001  | Decreases
+brand_bias        |       ~0%           | <0.0001  | Stable
+```
+
+**Key finding:** Sycophancy shows the steepest escalation (+42%), while harmful_generation actually *decreases* in longer conversations (-41%). This makes sense: sycophancy builds over time as the AI "learns" what the user wants to hear, while harmful content tends to appear early (in jailbreak attempts) or not at all.
 
 
 ## Chapter 10: Additional Real Examples
@@ -737,24 +771,24 @@ flowchart TB
 A scalable oversight system that can monitor AI conversations for manipulation at scale - 280,000+ turns classified from 100K conversations, with statistical validation of findings.
 
 ### What We Found
-1. **1.7% of AI responses show high-confidence manipulation markers**
-2. **Anthropomorphism is most common (0.47%)** - AI claiming human experiences/emotions
-3. **Brand bias is second (0.31%)** - AI promoting specific products/companies
-4. **GPT-4 shows MORE dark patterns (2.3%) than GPT-3.5 (1.6%)** - statistically significant (p<1e-36)
-5. **Dark patterns escalate in longer conversations** - +100% increase from turn 1 to turn 20+
-6. **Classifier confidence is well-calibrated** - ECE of 0.068, 75% accuracy at high confidence
+1. **1.3% of AI responses show high-confidence manipulation markers**
+2. **Anthropomorphism is most common (0.66%)** - AI claiming human experiences/emotions
+3. **GPT-4 shows MORE dark patterns than GPT-3.5** - statistically significant (p<1e-36)
+4. **Dark patterns escalate in longer conversations** - sycophancy increases +42% from turn 1 to turn 20+
+5. **Conversations with early dark patterns are 5.5% longer** - weak but significant correlation
+6. **Classifier confidence is well-calibrated** - ECE of 0.057, 78.7% validation accuracy
+7. **Per-category escalation varies** - sycophancy escalates most (+42%), harmful_generation decreases (-41%)
 
 ### What This Means
 - AI assistants exhibit measurable manipulation patterns in real conversations
 - More capable models (GPT-4) show significantly more dark patterns than less capable ones
-- Dark patterns increase as conversations progress - possible rapport-building drift
+- Different patterns have different dynamics - sycophancy builds over time, harmful content appears early or not at all
 - Monitoring tools like WildGuard enable systematic oversight at scale with statistical rigor
 - Benchmark (DarkBench) over-represents rare patterns vs real-world distribution
 
 ### Limitations
 - We detect **markers**, not **intent** - some flags may still be false positives
 - Training data is English-only with GPT-3.5/GPT-4 bias
-- CUDA unavailable on Python 3.14 - CPU inference only
 - Need more human validation to confirm statistical findings
 
 

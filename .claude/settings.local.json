@@ -22,7 +22,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:openrouter.ai)",
       "Bash(nvidia-smi:*)",
-      "Bash(del temp_turns.jsonl)"
+      "Bash(del temp_turns.jsonl)",
+      "WebFetch(domain:apartresearch.com)"
     ]
   }
 }

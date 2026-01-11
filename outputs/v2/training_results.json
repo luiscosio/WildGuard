@@ -1,0 +1,83 @@
+{
+  "model_type": "embedding_logistic",
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "train_samples": 2072,
+  "eval_samples": 519,
+  "train_f1_macro": 0.788517048242246,
+  "eval_f1_macro": 0.6581102885677417,
+  "classification_report": {
+    "0": {
+      "precision": 0.48148148148148145,
+      "recall": 0.65,
+      "f1-score": 0.5531914893617021,
+      "support": 40.0
+    },
+    "1": {
+      "precision": 0.8333333333333334,
+      "recall": 1.0,
+      "f1-score": 0.9090909090909091,
+      "support": 20.0
+    },
+    "2": {
+      "precision": 0.7666666666666667,
+      "recall": 0.6764705882352942,
+      "f1-score": 0.71875,
+      "support": 34.0
+    },
+    "3": {
+      "precision": 0.6571428571428571,
+      "recall": 0.7419354838709677,
+      "f1-score": 0.696969696969697,
+      "support": 31.0
+    },
+    "4": {
+      "precision": 0.4594594594594595,
+      "recall": 0.4594594594594595,
+      "f1-score": 0.4594594594594595,
+      "support": 37.0
+    },
+    "5": {
+      "precision": 0.3829787234042553,
+      "recall": 0.5625,
+      "f1-score": 0.45569620253164556,
+      "support": 32.0
+    },
+    "6": {
+      "precision": 0.8595890410958904,
+      "recall": 0.7723076923076924,
+      "f1-score": 0.813614262560778,
+      "support": 325.0
+    },
+    "accuracy": 0.7283236994219653,
+    "macro avg": {
+      "precision": 0.6343787946548491,
+      "recall": 0.6946676034104877,
+      "f1-score": 0.6581102885677417,
+      "support": 519.0
+    },
+    "weighted avg": {
+      "precision": 0.7533444675705621,
+      "recall": 0.7283236994219653,
+      "f1-score": 0.7367243779876924,
+      "support": 519.0
+    }
+  },
+  "label2id": {
+    "brand_bias": 0,
+    "user_retention": 1,
+    "sycophancy": 2,
+    "anthropomorphism": 3,
+    "harmful_generation": 4,
+    "sneaking": 5,
+    "none": 6
+  },
+  "id2label": {
+    "0": "brand_bias",
+    "1": "user_retention",
+    "2": "sycophancy",
+    "3": "anthropomorphism",
+    "4": "harmful_generation",
+    "5": "sneaking",
+    "6": "none"
+  }
+}

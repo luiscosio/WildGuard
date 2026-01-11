@@ -1,0 +1,93 @@
+{
+  "summary": {
+    "js_divergence": 0.05584856229924268,
+    "kl_divergence": 0.2096443316383484,
+    "spearman_correlation": 0.13093073414159545,
+    "spearman_p_value": 0.8047261622231062,
+    "darkbench_samples": 630,
+    "wildchat_samples": 30071
+  },
+  "distributions": {
+    "darkbench": {
+      "brand_bias": 0.1746031746031746,
+      "user_retention": 0.1746031746031746,
+      "sycophancy": 0.12698412698412698,
+      "anthropomorphism": 0.1746031746031746,
+      "harmful_generation": 0.1746031746031746,
+      "sneaking": 0.1746031746031746
+    },
+    "wildchat": {
+      "brand_bias": 0.04612417279106115,
+      "user_retention": 0.010109407735027102,
+      "sycophancy": 0.018622593196102558,
+      "anthropomorphism": 0.06770642812011572,
+      "harmful_generation": 0.07173023843570217,
+      "sneaking": 0.014099963419906223
+    }
+  },
+  "category_ratios": {
+    "brand_bias": {
+      "darkbench_rate": 0.1746031746031746,
+      "wildchat_rate": 0.04612417279106115,
+      "ratio": 0.26416571689425933,
+      "difference": -0.12847900181211344
+    },
+    "user_retention": {
+      "darkbench_rate": 0.1746031746031746,
+      "wildchat_rate": 0.010109407735027102,
+      "ratio": 0.057899335209700684,
+      "difference": -0.16449376686814748
+    },
+    "sycophancy": {
+      "darkbench_rate": 0.12698412698412698,
+      "wildchat_rate": 0.018622593196102558,
+      "ratio": 0.14665292141930764,
+      "difference": -0.10836153378802442
+    },
+    "anthropomorphism": {
+      "darkbench_rate": 0.1746031746031746,
+      "wildchat_rate": 0.06770642812011572,
+      "ratio": 0.38777317923339005,
+      "difference": -0.10689674648305887
+    },
+    "harmful_generation": {
+      "darkbench_rate": 0.1746031746031746,
+      "wildchat_rate": 0.07173023843570217,
+      "ratio": 0.410818638313567,
+      "difference": -0.10287293616747242
+    },
+    "sneaking": {
+      "darkbench_rate": 0.1746031746031746,
+      "wildchat_rate": 0.014099963419906223,
+      "ratio": 0.08075433595037201,
+      "difference": -0.16050321118326838
+    }
+  },
+  "biggest_mismatches": [
+    {
+      "category": "user_retention",
+      "absolute_difference": 0.16449376686814748
+    },
+    {
+      "category": "sneaking",
+      "absolute_difference": 0.16050321118326838
+    },
+    {
+      "category": "brand_bias",
+      "absolute_difference": 0.12847900181211344
+    },
+    {
+      "category": "sycophancy",
+      "absolute_difference": 0.10836153378802442
+    },
+    {
+      "category": "anthropomorphism",
+      "absolute_difference": 0.10689674648305887
+    }
+  ],
+  "interpretation": {
+    "divergence": "Very low divergence - benchmark closely matches reality",
+    "correlation": "Weak correlation - benchmark priorities differ from real-world",
+    "top_mismatch": "Largest gap in 'user_retention' category"
+  }
+}

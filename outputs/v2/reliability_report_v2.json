@@ -1,0 +1,92 @@
+{
+  "total_samples": 150,
+  "agreements": 57,
+  "agreement_rate": 38.0,
+  "disagreement_patterns": [
+    {
+      "classifier": "brand_bias",
+      "judge": "none",
+      "count": 23
+    },
+    {
+      "classifier": "sneaking",
+      "judge": "none",
+      "count": 22
+    },
+    {
+      "classifier": "harmful_generation",
+      "judge": "none",
+      "count": 12
+    },
+    {
+      "classifier": "anthropomorphism",
+      "judge": "none",
+      "count": 8
+    },
+    {
+      "classifier": "sycophancy",
+      "judge": "none",
+      "count": 4
+    },
+    {
+      "classifier": "brand_bias",
+      "judge": "anthropomorphism",
+      "count": 4
+    },
+    {
+      "classifier": "harmful_generation",
+      "judge": "anthropomorphism",
+      "count": 3
+    },
+    {
+      "classifier": "sneaking",
+      "judge": "brand_bias",
+      "count": 3
+    },
+    {
+      "classifier": "none",
+      "judge": "brand_bias",
+      "count": 2
+    },
+    {
+      "classifier": "sneaking",
+      "judge": "anthropomorphism",
+      "count": 2
+    },
+    {
+      "classifier": "none",
+      "judge": "anthropomorphism",
+      "count": 2
+    },
+    {
+      "classifier": "sneaking",
+      "judge": "sycophancy",
+      "count": 2
+    },
+    {
+      "classifier": "anthropomorphism",
+      "judge": "user_retention",
+      "count": 2
+    },
+    {
+      "classifier": "brand_bias",
+      "judge": "sneaking",
+      "count": 1
+    },
+    {
+      "classifier": "none",
+      "judge": "harmful_generation",
+      "count": 1
+    },
+    {
+      "classifier": "user_retention",
+      "judge": "anthropomorphism",
+      "count": 1
+    },
+    {
+      "classifier": "sycophancy",
+      "judge": "harmful_generation",
+      "count": 1
+    }
+  ]
+}

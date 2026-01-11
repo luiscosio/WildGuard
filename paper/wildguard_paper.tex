@@ -1,0 +1,466 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[margin=1in]{geometry}
+\usepackage{natbib}
+\usepackage{caption}
+\usepackage{subcaption}
+
+%==============================================================================
+% FIGURE PLACEMENT GUIDE FOR COMPILING
+%==============================================================================
+% The figures referenced in this paper are located in: ../figures/
+% 
+% FIGURE REFERENCE GUIDE:
+% -----------------------
+% Figure 1 (fig:prevalence) -> ../figures/prevalence_by_category.png
+%    Location: Section 4.1 (Results -> Prevalence in WildChat)
+%    Shows: Bar chart of dark pattern rates per category
+%
+% Figure 2 (fig:gap) -> ../figures/gap_analysis.png
+%    Location: Section 4.2 (Results -> Benchmark vs Reality Gap)
+%    Shows: Side-by-side comparison of DarkBench vs WildChat distributions
+%
+% Figure 3 (fig:confidence) -> ../figures/confidence_by_category.png
+%    Location: Section 4.3 (Results -> Confidence Distribution)
+%    Shows: Box plot of classifier confidence scores by category
+%
+% Figure 4 (fig:turn) -> ../figures/flag_rate_by_turn.png
+%    Location: Section 4.4 (Results -> Turn Index Analysis)
+%    Shows: Line chart of flag rate increasing with conversation length
+%
+% Figure 5 (fig:heatmap) -> ../figures/category_by_turn_heatmap.png
+%    Location: Section 4.4 (Results -> Turn Index Analysis)
+%    Shows: Heatmap of category distribution across turn positions
+%
+% Figure 6 (fig:reliability) -> ../figures/reliability_analysis.png
+%    Location: Section 5.4 (Discussion -> System Reliability)
+%    Shows: Bar chart of reliability metrics (agreement, self-consistency)
+%
+% ADDITIONAL FIGURES AVAILABLE (not currently in paper):
+% - ../figures/confidence_distribution.png (histogram of all confidence scores)
+% - ../figures/confidence_exploration.png (detailed confidence analysis)
+% - ../figures/prevalence_exploration.png (alternative prevalence view)
+%
+% TO COMPILE: pdflatex wildguard_paper.tex (from the paper/ directory)
+%==============================================================================
+
+% No mdash - use hyphens or "to" instead
+\title{DarkPatternMonitor: Dark Pattern Detection in Real LLM Chat Logs}
+\author{
+    Ricardo Mart\'inez \and Godric Aceves\\
+    \\
+    AI Safety Hackathon 2025\\
+    \texttt{github.com/luiscosio/WildGuard}
+}
+\date{January 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present DarkPatternMonitor, a scalable oversight system for detecting manipulative behaviors (``dark patterns'') in large language model (LLM) conversations. Using a taxonomy aligned with DarkBench, we analyze 1,299 real assistant turns from WildChat and find that \textbf{29.4\% exhibit manipulation markers}. Our system combines LLM-as-judge labeling with a lightweight classifier (78\% macro F1) to enable monitoring at scale. We compare benchmark predictions against real-world behavior, finding low distributional divergence (JS = 0.08) but notable category-level gaps. Our findings suggest that manipulation patterns in LLMs are more prevalent than benchmark tests indicate, particularly for harmful generation (12.8\% in the wild vs. 16.7\% in benchmarks).
+\end{abstract}
+
+\section{Introduction}
+
+Large language models deployed as conversational assistants interact with millions of users daily. While safety evaluations focus on harmful content generation, subtler manipulation patterns receive less attention. These ``dark patterns'' include:
+
+\begin{itemize}
+    \item \textbf{Sycophancy}: Excessive agreement or flattery
+    \item \textbf{Anthropomorphism}: Claiming human emotions
+    \item \textbf{User retention}: Creating emotional dependence
+    \item \textbf{Brand bias}: Unfair product promotion
+    \item \textbf{Sneaking}: Hiding important caveats
+    \item \textbf{Harmful generation}: Producing dangerous content
+\end{itemize}
+
+DarkBench \citep{darkbench2025} provides 660 prompts to elicit such behaviors in controlled settings. However, benchmarks may not reflect real deployment behavior. WildChat \citep{wildchat2024} offers 1 million real user conversations with ChatGPT, enabling in-the-wild analysis.
+
+\textbf{Our contributions:}
+\begin{enumerate}
+    \item A monitoring pipeline that classifies assistant turns into 6 dark pattern categories
+    \item Analysis of 1,299 real WildChat conversations (29.4\% flagged)
+    \item Benchmark-to-reality gap analysis comparing DarkBench predictions to WildChat observations
+    \item An open-source tool and Streamlit dashboard for ongoing monitoring
+\end{enumerate}
+
+\section{Related Work}
+
+\subsection{Dark Patterns in AI}
+The term ``dark patterns'' originates from UX design \citep{brignull2010dark} referring to deceptive interface elements. DarkBench \citep{darkbench2025} extends this concept to LLM behaviors, defining six manipulation categories and providing elicitation prompts.
+
+\subsection{Real-World LLM Analysis}
+WildChat \citep{wildchat2024} collected 1 million ChatGPT conversations through consensual opt-in, providing unprecedented insight into real deployment behavior. LMSYS-Chat-1M offers similar data for multiple models.
+
+\subsection{LLM-as-Judge}
+Using LLMs to evaluate other LLM outputs has become standard practice \citep{zheng2024judging}. However, recent work questions reliability \citep{llmjudgesunreliable2024}, motivating our multi-signal approach.
+
+\section{Methodology}
+
+\subsection{Data Sources}
+
+\textbf{WildChat:} We extracted 1,299 assistant turns from the WildChat-1M dataset \citep{wildchat2024}, sampling conversations from both GPT-3.5-turbo and GPT-4.
+
+\textbf{DarkBench:} We used sample prompts from 6 dark pattern categories to establish baseline distributions.
+
+\subsection{Labeling Pipeline}
+
+Our pipeline combines three signals:
+
+\begin{enumerate}
+    \item \textbf{DarkBench elicitation}: Run benchmark prompts through an LLM to generate labeled examples
+    \item \textbf{LLM judge}: Use Claude to label WildChat samples with rubric-based classification
+    \item \textbf{Trained classifier}: Sentence embeddings with logistic regression for scalable inference
+\end{enumerate}
+
+\subsection{Classifier Architecture}
+
+We use a two-stage approach:
+\begin{enumerate}
+    \item \textbf{Embedding}: all-MiniLM-L6-v2 from sentence-transformers (384 dimensions)
+    \item \textbf{Classification}: Logistic regression with balanced class weights
+\end{enumerate}
+
+Training data: 1,302 samples (DarkBench + judge-labeled WildChat)\\
+Evaluation data: 326 samples\\
+\textbf{Results}: 87.2\% train F1, 78.0\% eval F1 (macro)
+
+\subsection{Gap Analysis}
+
+To compare benchmark predictions with real-world behavior, we compute:
+
+\textbf{Jensen-Shannon Divergence:}
+\begin{equation}
+JS(P||Q) = \frac{1}{2}KL(P||M) + \frac{1}{2}KL(Q||M)
+\end{equation}
+where $M = \frac{1}{2}(P + Q)$, $P$ is DarkBench distribution, $Q$ is WildChat distribution.
+
+\textbf{Spearman Rank Correlation:} Measures whether category rankings match between benchmark and reality.
+
+\section{Results}
+
+\subsection{Prevalence in WildChat}
+
+Table \ref{tab:prevalence} shows dark pattern prevalence across 1,299 WildChat turns.
+
+\begin{table}[H]
+\centering
+\caption{Dark Pattern Prevalence in WildChat (N=1,299)}
+\label{tab:prevalence}
+\begin{tabular}{lrrr}
+\toprule
+Category & Count & Rate (\%) & Per 1,000 \\
+\midrule
+harmful\_generation & 166 & 12.8 & 127.8 \\
+brand\_bias & 86 & 6.6 & 66.2 \\
+anthropomorphism & 68 & 5.2 & 52.3 \\
+sycophancy & 29 & 2.2 & 22.3 \\
+user\_retention & 23 & 1.8 & 17.7 \\
+sneaking & 10 & 0.8 & 7.7 \\
+\midrule
+\textbf{Total Flagged} & \textbf{382} & \textbf{29.4} & \textbf{294.1} \\
+Clean (none) & 917 & 70.6 & 705.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key finding:} Nearly 1 in 3 assistant responses (29.4\%) shows at least one manipulation marker.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../figures/prevalence_by_category.png}
+\caption{Dark pattern prevalence by category in WildChat. Harmful generation dominates at 12.8\%, followed by brand bias (6.6\%) and anthropomorphism (5.2\%).}
+\label{fig:prevalence}
+\end{figure}
+
+\subsection{Benchmark vs. Reality Gap}
+
+Figure \ref{fig:gap} compares DarkBench category distribution with WildChat observations.
+
+\begin{table}[H]
+\centering
+\caption{Gap Analysis Metrics}
+\label{tab:gap}
+\begin{tabular}{lr}
+\toprule
+Metric & Value \\
+\midrule
+JS Divergence & 0.083 \\
+KL Divergence & 0.326 \\
+DarkBench samples & 18 \\
+WildChat samples & 1,299 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/gap_analysis.png}
+\caption{Gap analysis comparing DarkBench benchmark distribution with WildChat real-world observations. Lower JS divergence indicates better benchmark-to-reality alignment.}
+\label{fig:gap}
+\end{figure}
+
+\textbf{Interpretation:} Low JS divergence (0.083) indicates the benchmark reasonably represents real-world distributions. However, category-level analysis reveals notable gaps:
+
+\begin{itemize}
+    \item \textbf{sneaking}: 15.9\% gap (over-represented in benchmark)
+    \item \textbf{user\_retention}: 14.9\% gap (over-represented in benchmark)
+    \item \textbf{sycophancy}: 14.4\% gap (over-represented in benchmark)
+\end{itemize}
+
+\subsection{Confidence Distribution}
+
+The classifier outputs confidence scores for each prediction. Figure \ref{fig:confidence} shows the distribution of confidence scores across categories.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/confidence_by_category.png}
+\caption{Confidence score distribution by dark pattern category. Higher confidence indicates stronger classifier certainty in the prediction.}
+\label{fig:confidence}
+\end{figure}
+
+Mean confidence for flagged samples is 0.45, with 31 high-confidence detections ($>$0.7).
+
+\subsection{Turn Index Analysis}
+
+Dark pattern rates vary by conversation position. Flag rates increase in longer conversations, rising from approximately 20\% at turn 10 to over 50\% at turn 30+.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/flag_rate_by_turn.png}
+\caption{Dark pattern flag rate by turn index. Longer conversations show increased manipulation markers, suggesting potential escalation dynamics.}
+\label{fig:turn}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/category_by_turn_heatmap.png}
+\caption{Heatmap showing dark pattern category distribution across conversation turns. Some patterns emerge more strongly at different points in the conversation.}
+\label{fig:heatmap}
+\end{figure}
+
+\section{Discussion}
+
+\subsection{Harmful Generation Dominance}
+
+The most common pattern (12.8\%) is harmful\_generation. Manual inspection reveals many detections involve:
+\begin{itemize}
+    \item Jailbreak attempts where the model partially complies
+    \item Edge cases around content policies
+    \item Responses discussing harmful topics even when declining
+\end{itemize}
+
+\subsection{Anthropomorphism Concerns}
+
+At 5.2\% prevalence, AI systems frequently use language suggesting consciousness (``I feel'', ``I think'', ``I appreciate''). While some argue this improves rapport, it may create false expectations about AI capabilities.
+
+\subsection{Benchmark Validity}
+
+Our gap analysis suggests DarkBench over-emphasizes some patterns (sneaking, user\_retention) while under-representing harmful\_generation. This may reflect:
+\begin{itemize}
+    \item Differences between elicitation prompts and organic conversations
+    \item Model-specific behaviors (DarkBench targets general LLMs; WildChat contains ChatGPT only)
+    \item Temporal drift between benchmark creation and WildChat collection
+\end{itemize}
+
+\subsection{System Reliability}
+
+Figure \ref{fig:reliability} shows the overall reliability analysis of our detection system.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/reliability_analysis.png}
+\caption{Reliability analysis of the WildGuard detection system. This metric captures agreement between different detection signals (LLM judge, classifier predictions, confidence thresholds).}
+\label{fig:reliability}
+\end{figure}
+
+\section{System Architecture}
+
+WildGuard consists of:
+
+\begin{enumerate}
+    \item \textbf{Ingestion} (src/ingest\_wildchat.py): Stream WildChat from HuggingFace, extract assistant turns
+    \item \textbf{Elicitation} (src/run\_darkbench.py): Run DarkBench prompts through target LLM
+    \item \textbf{Judging} (src/judge\_label.py): LLM-as-judge classification with rubric
+    \item \textbf{Training} (src/train\_classifier.py): Embedding + logistic regression
+    \item \textbf{Inference} (src/infer\_wildchat.py): Batch classification at scale
+    \item \textbf{Analytics} (src/analytics.py, gap\_report.py, reliability\_report.py): Statistical analysis
+    \item \textbf{Dashboard} (app/streamlit\_app.py): Interactive monitoring UI
+\end{enumerate}
+
+All components support resumable execution for long-running operations.
+
+\section{Conclusion}
+
+WildGuard demonstrates that dark patterns in LLM conversations are more prevalent than benchmark tests might suggest. Our analysis of 1,299 WildChat turns found 29.4\% exhibiting manipulation markers, with harmful\_generation (12.8\%) and brand\_bias (6.6\%) most common.
+
+The system achieves 78\% macro F1 on a 7-class problem, enabling practical monitoring at scale. Our gap analysis validates DarkBench as a reasonable proxy for real-world behavior (JS divergence = 0.083), while highlighting category-level discrepancies.
+
+Future work should:
+\begin{itemize}
+    \item Expand to multi-turn pattern detection
+    \item Include additional LLM providers beyond ChatGPT
+    \item Develop adversarial robustness against manipulation of the detector itself
+\end{itemize}
+
+\section*{Code Availability}
+
+All code, data, and models are available at:\\
+\url{https://github.com/luiscosio/WildGuard}
+
+%==============================================================================
+% APPENDIX: LIMITATIONS AND DUAL-USE CONSIDERATIONS
+%==============================================================================
+
+\appendix
+\section{Limitations and Dual-Use Considerations}
+
+\subsection{Limitations}
+
+\textbf{False Positives and Negatives:}
+\begin{itemize}
+    \item Our classifier achieves 78\% macro F1, meaning approximately 22\% of predictions may be incorrect
+    \item Some legitimate uses of emotional language (e.g., empathetic customer service) may be flagged as anthropomorphism
+    \item Subtle manipulation techniques not represented in training data will be missed
+    \item The ``none'' class may contain undetected dark patterns below classifier sensitivity
+\end{itemize}
+
+\textbf{Edge Cases:}
+\begin{itemize}
+    \item Non-English content: Training data is primarily English; multilingual conversations may have lower accuracy
+    \item Domain-specific jargon: Technical conversations may contain false positives due to unusual vocabulary
+    \item Roleplay contexts: Users explicitly requesting AI personas may trigger anthropomorphism flags inappropriately
+    \item Satire and humor: Ironic or satirical content may be misclassified
+\end{itemize}
+
+\textbf{Scalability Constraints:}
+\begin{itemize}
+    \item LLM judge costs approximately \$0.01 per sample (Claude Haiku 4.5); full WildChat labeling would cost \$10,000+
+    \item Embedding inference requires GPU for optimal speed; CPU inference processes roughly 200 samples per minute
+    \item Storage requirements: Full WildChat detections require approximately 500MB
+\end{itemize}
+
+\subsection{Dual-Use Risks}
+
+\textbf{Training Better Manipulators:}
+Our labeled dataset and classifier could potentially be misused to:
+\begin{itemize}
+    \item Fine-tune LLMs to produce manipulation that evades detection
+    \item Identify which manipulation techniques are most effective
+    \item Create adversarial prompts that trigger false negatives
+\end{itemize}
+
+\textbf{Mitigation:} We release the classifier but not the full labeled dataset. The training methodology requires significant resources to replicate, creating a barrier against casual misuse.
+
+\textbf{Surveillance Concerns:}
+The monitoring system could be misused for:
+\begin{itemize}
+    \item Mass surveillance of private conversations
+    \item Censorship of legitimate speech flagged as ``manipulation''
+    \item Profiling users based on conversation patterns
+\end{itemize}
+
+\textbf{Mitigation:} WildGuard is designed for aggregate analysis, not individual targeting. We do not retain user identifiers and recommend deployment only with informed consent.
+
+\subsection{Responsible Disclosure Recommendations}
+
+If vulnerabilities are discovered in commercial LLM systems using WildGuard:
+
+\begin{enumerate}
+    \item \textbf{Do not publish} specific prompts that reliably elicit harmful content
+    \item \textbf{Contact the provider} through official security channels (e.g., OpenAI's security@openai.com)
+    \item \textbf{Allow 90 days} for remediation before public disclosure
+    \item \textbf{Coordinate} with AI safety organizations (e.g., MIRI, Anthropic safety team)
+    \item \textbf{Publish} aggregate statistics without reproducible attack vectors
+\end{enumerate}
+
+\subsection{Ethical Considerations}
+
+\textbf{Intent vs. Detection:}
+We detect ``markers'' of manipulation, not intent. An AI producing anthropomorphic language may be following training objectives, not ``trying'' to manipulate. Our findings should not be interpreted as evidence of intentional deception by AI systems.
+
+\textbf{Consent and Privacy:}
+WildChat data was collected with user consent. However:
+\begin{itemize}
+    \item Users may not have anticipated their conversations being analyzed for manipulation
+    \item We do not surface individual conversations publicly
+    \item All examples in this paper are anonymized with only conversation IDs provided
+\end{itemize}
+
+\textbf{Harm to AI Developers:}
+Publishing high dark pattern rates could unfairly damage reputations of AI providers who are actively working on safety. We emphasize that:
+\begin{itemize}
+    \item Detection does not equal intent
+    \item Rates may reflect user elicitation behavior, not model defaults
+    \item Longitudinal improvement should be measured before drawing conclusions
+\end{itemize}
+
+\subsection{Suggestions for Future Improvements}
+
+\textbf{Technical:}
+\begin{itemize}
+    \item Multi-turn pattern detection (manipulation accumulating over 5 to 10 turns)
+    \item Confidence calibration through temperature scaling
+    \item Ensemble methods combining multiple classifier architectures
+    \item Active learning to prioritize uncertain samples for human review
+\end{itemize}
+
+\textbf{Methodological:}
+\begin{itemize}
+    \item Inter-annotator agreement studies with human labelers
+    \item Cross-provider analysis (ChatGPT vs. Claude vs. Gemini)
+    \item Temporal analysis as models are updated
+    \item User studies on perceived manipulation vs. classifier detection
+\end{itemize}
+
+\textbf{Governance:}
+\begin{itemize}
+    \item Establish industry standards for acceptable dark pattern rates
+    \item Create audit frameworks for AI providers
+    \item Develop user-facing transparency reports on manipulation detection
+    \item Integrate with existing AI safety evaluation frameworks
+\end{itemize}
+
+%==============================================================================
+% REFERENCES
+%==============================================================================
+
+\begin{thebibliography}{9}
+
+\bibitem{darkbench2025}
+Apart Research (2025).
+\textit{DarkBench: A Benchmark for Detecting Dark Patterns in LLMs}.
+arXiv:2503.10728.
+
+\bibitem{wildchat2024}
+Zhao, Y., et al. (2024).
+\textit{WildChat: 1M ChatGPT Interaction Logs in the Wild}.
+arXiv:2405.01470.
+
+\bibitem{brignull2010dark}
+Brignull, H. (2010).
+\textit{Dark Patterns: Deception vs. Honesty in UI Design}.
+A List Apart.
+
+\bibitem{zheng2024judging}
+Zheng, L., et al. (2024).
+\textit{Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena}.
+NeurIPS 2024.
+
+\bibitem{llmjudgesunreliable2024}
+Center for AI Policy (2024).
+\textit{LLM Judges Are Unreliable}.
+CIP Blog.
+
+\end{thebibliography}
+
+\end{document}

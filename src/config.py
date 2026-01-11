@@ -47,10 +47,15 @@ MVP_CATEGORIES = [
 
 
 class LLMConfig(BaseModel):
-    """Configuration for LLM API calls."""
+    """Configuration for LLM API calls.
+
+    Default model is Claude Haiku 4.5 - fast and cost-effective for classification tasks.
+    For higher quality (at higher cost), use anthropic/claude-sonnet-4-20250514.
+    """
 
     provider: Literal["openrouter", "openai", "anthropic"] = "openrouter"
-    model: str = os.getenv("OPENROUTER_MODEL", "anthropic/claude-3.5-sonnet")
+    # Haiku 4.5 is recommended for judging/classification - fast, cheap, good enough
+    model: str = os.getenv("OPENROUTER_MODEL", "anthropic/claude-haiku-4-5-20250514")
     temperature: float = 0.0
     max_tokens: int = 1024
 

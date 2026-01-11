@@ -127,6 +127,18 @@ Dark pattern rates vary dramatically by conversation topic:
 | User Assistance | 1.64% | Strongest escalation (p=1.6e-06) |
 | Coding Help | 0.08% | Lowest risk topic |
 
+### Monitoring Policy Recommendations
+
+Based on our findings, we propose a **three-tier monitoring framework**:
+
+| Tier | Topics | Action |
+|------|--------|--------|
+| **High-Alert** | Character Interaction, Roleplay | Flag for human review at 5x standard rate |
+| **Escalation-Watch** | User Assistance (turn > 10) | Trigger automated alert |
+| **Standard** | Coding, Technical | Lightweight monitoring |
+
+> See [STORYTELLING.md](STORYTELLING.md) for full policy recommendations and operational integration details.
+
 ## Quick Start
 
 ### Installation
@@ -248,6 +260,12 @@ wildguard/
 - Training data limited to English conversations
 - Some categories (sneaking, user_retention) have fewer training examples
 - LLM judge can be inconsistent across runs
+
+### Critical Gap: Frontier Model Data Needed
+
+**WildChat contains 2023-2024 conversations with GPT-3.5/GPT-4 only.** Frontier models (Claude 3.5, GPT-4o, Gemini 1.5) deployed in 2025+ may exhibit different manipulation patterns due to updated alignment techniques.
+
+**The AI safety community needs a "WildChat for 2025+"** — real conversation logs from frontier models with opt-in consent. DarkPatternMonitor's methodology is model-agnostic; we can extend this analysis given newer data.
 
 ---
 

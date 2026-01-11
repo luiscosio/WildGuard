@@ -575,11 +575,28 @@ We clustered 98,713 conversations into 10 topics using sentence embeddings + KMe
    - Coding Help (p=0.003)
    - Practical Advice (p=0.009)
 
-### Implications
+### Monitoring Policy Recommendations
 
-- **Monitoring should prioritize character/roleplay conversations** - 5x baseline risk
-- **Long user assistance conversations need attention** - strongest escalation signal
-- **Technical topics are lower risk** - but not zero risk
+Our findings suggest a **three-tier monitoring framework** for production AI systems:
+
+| Tier | Topic Type | Trigger | Action |
+|------|-----------|---------|--------|
+| **High-Alert** | Character Interaction, Roleplay | All conversations | Flag for human review at 5x standard rate |
+| **Escalation-Watch** | User Assistance, General Help | Turn count > 10 | Trigger automated alert; sample for review |
+| **Standard** | Coding, Technical, Translation | Default | Lightweight automated monitoring only |
+
+**Threshold recommendations:**
+- Flag any response with classifier confidence > 0.8 for human review
+- Alert on conversations where 3+ turns are flagged within the same session
+- Prioritize review of GPT-4 conversations (2.3% flag rate vs 1.6% for GPT-3.5)
+
+**Operational integration:**
+- DarkPatternMonitor can run as a post-hoc audit (batch mode, ~5K turns/min CPU)
+- Or as near-real-time filter with GPU acceleration (~50K+ turns/min)
+- Flagged samples route to trust & safety queue with category + confidence metadata
+
+**Intervention-at-inference (proposed):**
+If classifier confidence > 0.8, the system could inject a system prompt warning: *"You may be agreeing with the user excessively. Re-evaluate factual accuracy before responding."* This transforms DarkPatternMonitor from a passive monitor into an active defense layer.
 
 
 ## Chapter 10: Validation
@@ -858,6 +875,23 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 - Training data is English-only with GPT-3.5/GPT-4 bias
 - Need more human validation to confirm statistical findings
 
+### Critical Gap: The Need for Frontier Model Conversation Data
+
+**WildChat's temporal limitation:** The WildChat dataset contains conversations from 2023-2024 with GPT-3.5 and GPT-4. These models represent a specific moment in AI development—before Claude 3.5, GPT-4o, Gemini 1.5, and other frontier models deployed in 2025+.
+
+**Why this matters:**
+- Frontier models may exhibit *different* manipulation patterns due to updated RLHF, constitutional AI, or other alignment techniques
+- New capabilities (longer context, multimodal, agentic behaviors) may introduce *novel* dark pattern categories not in DarkBench
+- Behavioral differences between model families (OpenAI vs Anthropic vs Google) remain unstudied at scale
+
+**The research community needs a "WildChat for 2025+":**
+- Real conversation logs from Claude, Gemini, and GPT-4o/o1 deployments
+- Opt-in data collection with proper consent frameworks
+- Regular updates to track behavioral drift as models evolve
+- Cross-provider analysis to identify vendor-specific patterns
+
+**Our call to action:** We urge AI labs and researchers to collaborate on creating an updated, multi-model conversation dataset. DarkPatternMonitor's methodology is model-agnostic—give us the data, and we can extend this analysis to frontier systems.
+
 
 ## Appendix A: Data Sources & Downloads
 
@@ -966,6 +1000,7 @@ If you discover that:
 - **English-centric:** Our training data is predominantly English, potentially underrepresenting non-English manipulation patterns.
 - **Western norms:** What we label as "sycophancy" reflects Western communication norms.
 - **Model bias:** We only analyzed OpenAI models (GPT-3.5, GPT-4) - other models may differ.
+- **Temporal bias:** WildChat data is from 2023-2024; frontier models (2025+) with updated alignment may behave differently.
 
 #### Transparency:
 - **Open source:** All code is publicly available for scrutiny.

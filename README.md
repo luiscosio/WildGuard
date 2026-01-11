@@ -99,26 +99,32 @@ From analyzing **30,071** real WildChat conversations:
 
 | Metric | Value |
 |--------|-------|
-| Overall flag rate | 3.3% |
-| Top pattern | Sycophancy (1.3%) |
-| Classifier F1 | 93.6% |
-| Judge-Classifier agreement | 81.4% |
+| Overall flag rate | **22.8%** |
+| Top pattern | Harmful Generation (7.2%) |
+| Second pattern | Anthropomorphism (6.8%) |
+| Classifier F1 | 78.0% |
+| Judge-Classifier agreement | 78.7% |
+| Reliability Score | 87.2% |
 
 ### Category Distribution
 
 ```mermaid
-pie title Dark Patterns in WildChat
-    "None (Clean)" : 967
-    "Sycophancy" : 13
-    "Brand Bias" : 10
-    "User Retention" : 9
+pie title Dark Patterns in WildChat (30,071 turns)
+    "None (Clean)" : 23203
+    "Harmful Generation" : 2157
+    "Anthropomorphism" : 2036
+    "Brand Bias" : 1387
+    "Sycophancy" : 560
+    "Sneaking" : 424
+    "User Retention" : 304
 ```
 
 ### Key Findings
 
-1. **GPT-4 shows higher dark pattern rate** (3.89%) than GPT-3.5 (3.03%)
-2. **Sycophancy increases with conversation length** - more common in later turns
-3. **Strong benchmark-reality correlation** (Spearman ρ = 0.79)
+1. **Nearly 1 in 4 AI responses (22.8%) shows manipulation markers**
+2. **GPT-4 shows higher dark pattern rate** (25.1%) than GPT-3.5 (21.9%)
+3. **Harmful generation is most common** (7.2%) - AI producing potentially harmful content
+4. **Dark patterns increase in longer conversations** (29.3% at turn 20+)
 
 ## Quick Start
 
@@ -260,9 +266,9 @@ sequenceDiagram
 
 ## Limitations
 
-- Detects **markers**, not intent - patterns may be false positives
+- Detects **markers**, not intent - some flags may be false positives
 - Training data limited to English conversations
-- Some categories (anthropomorphism, harmful generation, sneaking) have fewer training examples
+- Some categories (sneaking, user_retention) have fewer training examples
 - LLM judge can be inconsistent across runs
 
 ## License

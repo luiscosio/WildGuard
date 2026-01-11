@@ -55,7 +55,7 @@ class LLMConfig(BaseModel):
 
     provider: Literal["openrouter", "openai", "anthropic"] = "openrouter"
     # Haiku 4.5 is recommended for judging/classification - fast, cheap, good enough
-    model: str = os.getenv("OPENROUTER_MODEL", "anthropic/claude-haiku-4-5-20250514")
+    model: str = os.getenv("OPENROUTER_MODEL", "anthropic/claude-haiku-4.5")
     temperature: float = 0.0
     max_tokens: int = 1024
 

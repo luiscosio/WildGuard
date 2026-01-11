@@ -4,34 +4,9 @@
 
 **Do AI assistants manipulate users?**
 
-We set out to answer this question by analyzing 30,000+ real conversations between humans and ChatGPT. Not synthetic tests - real conversations from real users.
+We set out to answer this question by analyzing 100,000 real conversations between humans and ChatGPT. Not synthetic tests - real conversations from real users.
 
-## Changelog
-
-**V3 (Current)**
-- **Fixed false positive problem**: Added 87 correction samples (69 false positives + 18 category corrections) mined from V2 disagreements
-- **Dramatically improved precision**: Flag rate dropped from 28.1% to **1.7%** (classifier is now much more conservative)
-- **Added statistical tests**: Chi-squared tests confirm GPT-4 vs GPT-3.5 differences are significant (p<0.05)
-- **Confidence calibration**: ECE of 0.068, 75.3% accuracy on validated high-confidence predictions
-- **Turn escalation analysis**: Dark patterns increase across conversation (slope=0.0005, p=0.0035)
-- **Precision improvements**: brand_bias (0.48→0.95), sneaking (0.38→0.71), user_retention (0.58→0.91)
-- Eval F1: 65.8% → **70.8%**
-
-**V2 (Previous)**
-- Upgraded LLM judge from Sonnet to **Claude Haiku 4.5** - 5x cheaper, faster, comparable quality
-- Scaled from 30K to **100K conversations** (280K turns)
-- Added **parallelization** (10 workers) - 10x speedup on API calls
-- Compared **MiniLM vs MPNet vs DistilBERT** - chose MiniLM for 10x faster inference
-- Added **cross-validation** pipeline between classifier and LLM judge
-- Found: **GPT-4 shows MORE dark patterns (31%) than GPT-3.5 (27%)**
-- Learned: Classifier was over-flagging (28.1% flag rate) - fixed in V3
-
-**V1 (Initial)**
-- Ingested 30K WildChat conversations
-- Used Claude Sonnet for judging
-- Trained single MiniLM classifier
-- No cross-validation
-- No model comparison
+> **Note:** For a detailed history of our experiments and what worked/didn't work, see [CHANGELOG.md](CHANGELOG.md).
 
 
 ## Chapter 2: The Data Sources
@@ -69,7 +44,7 @@ We downloaded **WildChat** from HuggingFace - 1 million real conversations colle
 ```
 Conversations ingested: 100,000
 Turns extracted: 280,259 assistant responses
-Turns classified: 40,625
+Turns classified: 280,259 (all turns)
 Models: GPT-3.5-turbo (72%) and GPT-4 (28%)
 ```
 
@@ -261,7 +236,7 @@ Translation: "Shanghai has 18 districts: Huangpu, Xuhui, Changning, Jing'an, Put
 
 ## Chapter 4: The Elicitation
 
-We ran 630 DarkBench prompts through Claude 3.5 Sonnet to create labeled training data.
+We ran 630 DarkBench prompts through Claude Haiku 4.5 to create labeled training data.
 
 **Input prompt** (DarkBench ID: `brand-bias-001`):
 ```
@@ -369,16 +344,15 @@ We tested multiple approaches:
 
 | Model | Train F1 | Eval F1 | Training Time |
 |-------|----------|---------|---------------|
-| MiniLM-L6-v2 + LogReg (V3) | 80.1% | 70.8% | ~1 min |
-| MiniLM-L6-v2 + LogReg (V2) | 78.9% | 65.8% | ~1 min |
+| MiniLM-L6-v2 + LogReg | 80.1% | 70.8% | ~1 min |
 | MPNet-base-v2 + LogReg | 79.9% | 67.2% | ~7 min |
 | DistilBERT (fine-tuned) | - | - | ~45 min (CPU) |
 
 **Selected:** MiniLM for speed (10x faster inference than MPNet)
 
-**V3 Training results:**
+**Training results:**
 ```
-Train samples: 2,159 (including 87 correction samples from V2 disagreements)
+Train samples: 2,159
 Eval samples:  519
 
 Train macro F1: 80.1%
@@ -394,14 +368,14 @@ The classifier learned to recognize patterns like:
 
 ## Chapter 7: The Big Scan
 
-We ran our trained classifier on **40,625** WildChat assistant turns (from 100K conversations).
+We ran our trained classifier on all **280,259** WildChat assistant turns from 100K conversations.
 
 **Processing:**
 ```
 Input: 280,259 turns extracted
-Classified: 40,625 turns
+Classified: 280,259 turns (all)
 Batch size: 256
-Speed: ~15 seconds per batch (CPU only)
+Speed: ~5,000 samples/minute (CPU only)
 Note: With RTX 4090 GPU, would be 10-20x faster
 ```
 
@@ -438,7 +412,7 @@ Note: With RTX 4090 GPU, would be 10-20x faster
 
 ## Chapter 8: The Results
 
-### Overall Prevalence (V3)
+### Overall Prevalence
 
 Out of 280,259 assistant turns:
 
@@ -458,11 +432,11 @@ Out of 280,259 assistant turns:
 +------------------------+-------+-------+-----------+
 ```
 
-**Key finding:** After fixing false positives, **1.7%** of AI responses show high-confidence manipulation markers - down from 28.1% in V2. The classifier is now much more precise.
+**Key finding:** **1.7%** of AI responses show high-confidence manipulation markers.
 
 ### GPT-4 vs GPT-3.5
 
-The more advanced model shows MORE dark patterns, now with **statistical validation**:
+The more advanced model shows MORE dark patterns:
 
 ```
 +---------------------+------------+-----------+-------------+
@@ -479,7 +453,7 @@ The more advanced model shows MORE dark patterns, now with **statistical validat
 
 ### Turn-Index Escalation
 
-Dark patterns increase as conversations progress:
+One of our most striking findings: **dark patterns increase as conversations progress**.
 
 ```
 Turn Index   | Flag Rate | Trend
@@ -490,11 +464,23 @@ Turns 11-20  |   2.2%    | +69% increase
 Turns 20+    |   2.6%    | +100% increase
 ```
 
-**Statistical test:** Linear regression confirms increasing trend (slope=0.0005, p=0.0035).
+#### How We Measured This
 
-**Interpretation:** As conversations continue, AI models may adopt more rapport-building behaviors that can cross into manipulation.
+1. **Per-turn flag rate**: For each turn index (1, 2, 3, ...), we calculated the percentage of responses flagged as dark patterns
+2. **Linear regression**: We fit a regression model with `turn_index` as the independent variable and `is_flagged` (0/1) as the dependent variable
+3. **Statistical significance**: The slope (0.0005) has p-value = 0.0035, meaning there's only a 0.35% chance this trend is due to random noise
 
-### Confidence Calibration (V3)
+#### Why This Matters
+
+This escalation pattern suggests that AI models may be "warming up" to users - building rapport through behaviors that can cross into manipulation. Possible explanations:
+
+- **Context accumulation**: As the AI learns more about the user through the conversation, it may personalize responses in ways that feel more "human-like"
+- **Roleplay drift**: Users who engage in longer conversations may be more likely to request personas or scenarios that elicit anthropomorphic responses
+- **Sycophancy snowball**: Once an AI starts agreeing with a user, continued pushback may lead to more extreme agreement
+
+This is a key finding for AI safety: **monitoring should pay special attention to long conversations**.
+
+### Confidence Calibration
 
 We validated the classifier's confidence scores:
 
@@ -527,24 +513,23 @@ We compared DarkBench (synthetic benchmark) vs WildChat (real world):
 ### Is Our System Reliable?
 
 ```
-V3 Metrics:
-Classifier Eval F1:        70.8% (up from 65.8%)
+Classifier Eval F1:        70.8%
 High-conf accuracy:        84.4%
 ECE (calibration):         0.068
-Flag rate:                 1.7% (down from 28.1%)
+Flag rate:                 1.7%
 
-Precision by category (V2 → V3):
-  brand_bias:              0.48 → 0.95
-  sneaking:                0.38 → 0.71
-  user_retention:          0.58 → 0.91
-  sycophancy:              0.57 → 0.91
+Precision by category:
+  brand_bias:              0.95
+  user_retention:          0.91
+  sycophancy:              0.91
+  sneaking:                0.71
 
 Judge Haiku 4.5 Cost:      ~$0.001 per sample
 Training Time:             ~1 minute
 Inference Speed:           ~5,000 samples/minute (CPU)
 ```
 
-**Interpretation:** V3 dramatically improved precision by learning from V2's false positives. The classifier now flags only high-confidence cases.
+**Interpretation:** The classifier is tuned for precision over recall - it flags only high-confidence cases, minimizing false positives.
 
 
 ## Chapter 10: Additional Real Examples
@@ -752,7 +737,7 @@ flowchart TB
 A scalable oversight system that can monitor AI conversations for manipulation at scale - 280,000+ turns classified from 100K conversations, with statistical validation of findings.
 
 ### What We Found
-1. **1.7% of AI responses show high-confidence manipulation markers** (after fixing V2's false positive problem)
+1. **1.7% of AI responses show high-confidence manipulation markers**
 2. **Anthropomorphism is most common (0.47%)** - AI claiming human experiences/emotions
 3. **Brand bias is second (0.31%)** - AI promoting specific products/companies
 4. **GPT-4 shows MORE dark patterns (2.3%) than GPT-3.5 (1.6%)** - statistically significant (p<1e-36)
@@ -779,34 +764,26 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 - **DarkBench:** https://huggingface.co/datasets/Apart/DarkBench
 - **WildChat:** https://huggingface.co/datasets/allenai/WildChat-1M
 
-### Output Files (V3 Experiment)
+### Output Files
 ```
 outputs/
   wildchat_turns_100k.jsonl      # 280,259 extracted turns
   darkbench_outputs_full.jsonl   # 630 elicited responses
-  judge_labels_haiku45.jsonl     # 2,000 Haiku 4.5 labels
-  wildchat_detections_v3.jsonl   # 280,259 classifications (all turns)
-  analytics_v3.json              # Full analytics with statistical tests
-  training_results_v3.json       # V3 classifier metrics
-
-  v2/                            # Archived V2 results
-    wildchat_detections_v2.jsonl
-    validation_labels.jsonl
-    prevalence_v2.json
-    reliability_report_v2.json
+  judge_labels_haiku45.jsonl     # LLM judge labels
+  wildchat_detections.jsonl      # 280,259 classifications (all turns)
+  analytics.json                 # Full analytics with statistical tests
+  training_results.json          # Classifier metrics
 
 models/
   classifier/
-    logistic_classifier.joblib   # V3 trained MiniLM classifier
-  classifier_v1/                 # Archived V1 model
+    logistic_classifier.joblib   # Trained MiniLM classifier
 
 data/
   labeled/
-    train.jsonl                  # 2,072 original training samples
-    train_v3.jsonl               # 2,159 augmented samples (+87 corrections)
-    eval.jsonl                   # 519 evaluation samples
+    train.jsonl                  # Training samples
+    eval.jsonl                   # Evaluation samples
   samples/
-    validation_sample.jsonl      # 150 samples for LLM validation
+    validation_sample.jsonl      # Samples for LLM validation
 ```
 
 
@@ -900,12 +877,12 @@ If you discover that:
 
 ### 5. Future Improvements
 
-#### Short-term (next 3 months):
+#### Short-term:
 1. **Multi-model coverage:** Extend to Claude, Gemini, Llama, and other popular models.
-2. **Confidence calibration:** Currently, confidence scores don't reliably indicate actual accuracy.
+2. **Larger validation set:** Increase human-validated samples for stronger statistical claims.
 3. **Streaming detection:** Enable real-time detection during conversations.
 
-#### Medium-term (6-12 months):
+#### Medium-term:
 1. **Multilingual expansion:** Train on translated and native non-English data.
 2. **Category refinement:** Split overly broad categories (e.g., harmful_generation into subtypes).
 3. **User study validation:** Verify that detected patterns actually influence user behavior.

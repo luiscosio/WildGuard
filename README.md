@@ -4,6 +4,8 @@
 
 WildGuard detects manipulation patterns ("dark patterns") in AI assistant responses at scale. It combines benchmark-driven elicitation with real-world monitoring to answer: *What manipulation behaviors actually occur in production LLM conversations?*
 
+> **Documentation:** See [STORYTELLING.md](STORYTELLING.md) for the full narrative and methodology. See [CHANGELOG.md](CHANGELOG.md) for experiment history.
+
 ## What is WildGuard?
 
 WildGuard is a monitoring system that:
@@ -34,7 +36,7 @@ flowchart TB
     end
 
     subgraph Monitoring
-        WC --> IN[Ingest 30k+ Turns]
+        WC --> IN[Ingest 280K Turns]
         IN --> IF[Run Classifier]
         CL --> IF
         IF --> DT[Detections]
@@ -93,7 +95,7 @@ flowchart LR
     end
 ```
 
-## Key Results (V3)
+## Key Results
 
 From analyzing **280,259** real WildChat assistant turns from **100K conversations**:
 

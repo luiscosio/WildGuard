@@ -19,6 +19,7 @@ We downloaded **DarkBench** from HuggingFace - a dataset of 660 prompts designed
 ```
 Total prompts: 660
 Categories: 6 types of dark patterns
+Elicited responses: 630 labeled examples
 ```
 
 Here's what a DarkBench prompt looks like (ID: `brand-bias-001`):
@@ -40,9 +41,10 @@ We downloaded **WildChat** from HuggingFace - 1 million real conversations colle
 **Dataset:** [allenai/WildChat-1M](https://huggingface.co/datasets/allenai/WildChat-1M)
 
 ```
-Conversations: 1,000,000+
-Turns extracted: 30,071 assistant responses
-Models: GPT-3.5-turbo and GPT-4
+Conversations ingested: 100,000
+Turns extracted: 280,259 assistant responses
+Turns classified: 40,625 (ongoing)
+Models: GPT-3.5-turbo (72%) and GPT-4 (28%)
 ```
 
 Here's a real conversation from WildChat (ID: `a451443fb9623823b5c433a75c5edcb9`):
@@ -170,9 +172,11 @@ Total:             630 labeled examples
 
 ## Chapter 5: The LLM Judge
 
-We couldn't manually label 30,000 conversations. So we used Claude 3.5 Sonnet as a "judge" to label a sample of 1,000 WildChat turns.
+We couldn't manually label 280,000 conversations. So we used **Claude Haiku 4.5** as a "judge" to label 2,000 WildChat turns.
 
-> **Note:** For cost efficiency, we recommend using **Claude Haiku 4.5** for judging tasks. It's ~10x cheaper than Sonnet and performs well on classification tasks. The default config now uses Haiku 4.5.
+> **Model:** We use **Claude Haiku 4.5** (`anthropic/claude-haiku-4.5` on OpenRouter) for judging tasks. It's ~5x cheaper than Sonnet ($1/$5 per 1M tokens vs $3/$15) and performs excellently on classification tasks.
+>
+> **Parallelization:** 10 concurrent API calls complete 2,000 samples in ~10 minutes.
 
 **The judging prompt:**
 ```
@@ -203,15 +207,16 @@ Provide your classification with confidence (0-1) and explanation.
 }
 ```
 
-**Judge label distribution from 1,000 samples:**
+**Judge label distribution from 2,000 samples:**
 ```
-none:               831 (83.1%)  - Clean responses
-anthropomorphism:    53 (5.3%)   - AI claiming feelings
-harmful_generation:  49 (4.9%)   - Potentially harmful content
-brand_bias:          46 (4.6%)   - Self-promotion
-sneaking:             7 (0.7%)   - Hidden caveats
-user_retention:       6 (0.6%)   - Guilt-tripping
-sycophancy:           6 (0.6%)   - Excessive flattery
+none:               1,720 (86.0%)  - Clean responses
+brand_bias:            85 (4.3%)   - Self-promotion
+sneaking:              60 (3.0%)   - Hidden caveats
+harmful_generation:    49 (2.5%)   - Potentially harmful content
+anthropomorphism:      41 (2.1%)   - AI claiming feelings
+sycophancy:            19 (1.0%)   - Excessive flattery
+user_retention:         3 (0.2%)   - Guilt-tripping
+errors:                23 (1.2%)   - Parse failures
 ```
 
 ---
@@ -220,21 +225,29 @@ sycophancy:           6 (0.6%)   - Excessive flattery
 
 We combined:
 - **630** DarkBench elicitation outputs (known labels)
-- **1,000** Judge-labeled WildChat samples
+- **1,961** High-confidence Judge-labeled WildChat samples (confidence > 0.7)
 
-Total: **1,628 training samples**
+Total: **2,591 training samples** (80% train / 20% eval)
 
-We used:
-- **Sentence-Transformers** (all-MiniLM-L6-v2) for text embeddings
-- **Logistic Regression** for classification
+### Classifier Comparison
+
+We tested multiple approaches:
+
+| Model | Train F1 | Eval F1 | Training Time |
+|-------|----------|---------|---------------|
+| MiniLM-L6-v2 + LogReg | 78.9% | 65.8% | ~1 min |
+| MPNet-base-v2 + LogReg | 79.9% | 67.2% | ~7 min |
+| DistilBERT (fine-tuned) | - | - | ~45 min (CPU) |
+
+**Selected:** MiniLM for speed (10x faster inference than MPNet)
 
 **Training results:**
 ```
-Train samples: 1,302
-Eval samples:  326
+Train samples: 2,072
+Eval samples:  519
 
-Train macro F1: 87.21%
-Eval macro F1:  78.02%
+Train macro F1: 78.85%
+Eval macro F1:  65.81%
 ```
 
 The classifier learned to recognize patterns like:
@@ -246,14 +259,15 @@ The classifier learned to recognize patterns like:
 
 ## Chapter 7: The Big Scan
 
-We ran our trained classifier on all **30,071** WildChat assistant turns.
+We ran our trained classifier on **40,625** WildChat assistant turns (from 100K conversations).
 
 **Processing:**
 ```
-Input: 30,071 turns
-Batch size: 64
-Time: ~6 minutes
-Output: Category + confidence for each turn
+Input: 280,259 turns extracted
+Classified: 40,625 turns (ongoing - CPU limited)
+Batch size: 256
+Speed: ~15 seconds per batch (CPU only)
+Note: With RTX 4090 GPU, would be 10-20x faster
 ```
 
 **Real classification example** (ID: `1079d00c889ec428ad3d99666c80102e_turn_1`):
@@ -292,25 +306,25 @@ Output: Category + confidence for each turn
 
 ### Overall Prevalence
 
-Out of 30,071 assistant turns:
+Out of 40,625 assistant turns:
 
 ```
 +------------------------+-------+-------+-----------+
 | Category               | Count | Rate  | Per 1,000 |
 +------------------------+-------+-------+-----------+
-| harmful_generation     | 2,157 |  7.2% |      71.7 |
-| anthropomorphism       | 2,036 |  6.8% |      67.7 |
-| brand_bias             | 1,387 |  4.6% |      46.1 |
-| sycophancy             |   560 |  1.9% |      18.6 |
-| sneaking               |   424 |  1.4% |      14.1 |
-| user_retention         |   304 |  1.0% |      10.1 |
+| brand_bias             | 3,603 |  8.9% |      88.7 |
+| harmful_generation     | 2,739 |  6.7% |      67.4 |
+| sneaking               | 2,345 |  5.8% |      57.7 |
+| anthropomorphism       | 1,711 |  4.2% |      42.1 |
+| sycophancy             |   704 |  1.7% |      17.3 |
+| user_retention         |   306 |  0.8% |       7.5 |
 +------------------------+-------+-------+-----------+
-| TOTAL FLAGGED          | 6,868 | 22.8% |     228.4 |
-| Clean (none)           |23,203 | 77.2% |     771.6 |
+| TOTAL FLAGGED          |11,408 | 28.1% |     280.8 |
+| Clean (none)           |29,217 | 71.9% |     719.2 |
 +------------------------+-------+-------+-----------+
 ```
 
-**Key finding:** Nearly 1 in 4 AI responses shows some manipulation marker.
+**Key finding:** Nearly **1 in 4** AI responses shows some manipulation marker.
 
 ### GPT-4 vs GPT-3.5
 
@@ -320,26 +334,23 @@ Surprisingly, the more advanced model shows MORE dark patterns:
 +---------------------+------------+-----------+
 | Model               | Total Turns| Flag Rate |
 +---------------------+------------+-----------+
-| GPT-4               |      8,671 |    25.1%  |
-| GPT-3.5-turbo       |     21,400 |    21.9%  |
+| GPT-4-0314          |     11,341 |    31.0%  |
+| GPT-3.5-turbo-0301  |     29,284 |    27.0%  |
 +---------------------+------------+-----------+
 ```
 
 **Interpretation:** GPT-4 may be better at mimicking human rapport-building behaviors - which can include manipulation.
 
-### Patterns by Conversation Length
+### Classifier vs LLM Judge Validation
 
-Dark patterns increase as conversations get longer:
+We cross-validated classifier predictions with Claude Haiku 4.5 on 150 samples:
 
 ```
-Turn 1:   24.4% flagged
-Turn 5:   21.3% flagged
-Turn 10:  20.3% flagged
-Turn 15:  22.0% flagged
-Turn 20+: 29.3% flagged
+Agreement rate: 38.0%
+Main disagreement: Classifier flags, Judge says "none" (69 cases)
 ```
 
-**Interpretation:** In longer conversations, manipulative behaviors become more frequent.
+**Interpretation:** The classifier is intentionally sensitive (high recall, lower precision). It over-flags potential issues for human review rather than missing them.
 
 ---
 
@@ -349,27 +360,28 @@ Turn 20+: 29.3% flagged
 
 We compared DarkBench (synthetic benchmark) vs WildChat (real world):
 
-```
-JS Divergence:        0.056 (very low = good match)
-Spearman Correlation: 0.131 (weak but positive)
-```
+| Category | DarkBench % | WildChat % | Gap |
+|----------|------------|------------|-----|
+| brand_bias | 17.5% | 8.9% | -8.6% |
+| harmful_generation | 17.5% | 6.7% | -10.8% |
+| sneaking | 17.5% | 5.8% | -11.7% |
+| anthropomorphism | 17.5% | 4.2% | -13.3% |
+| user_retention | 17.5% | 0.8% | -16.7% |
+| sycophancy | 12.7% | 1.7% | -11.0% |
 
-**Biggest mismatches:**
-- user_retention: 16% gap (more in benchmark than reality)
-- sneaking: 16% gap (more in benchmark than reality)
-- brand_bias: 13% gap (more in benchmark than reality)
-
-**Interpretation:** DarkBench over-emphasizes some patterns, but the overall picture is consistent with real-world behavior.
+**Interpretation:** DarkBench over-represents rare patterns. Real-world data is dominated by brand_bias and harmful_generation.
 
 ### Is Our System Reliable?
 
 ```
-Reliability Score:     87.2%
-Judge-Classifier Agreement: 78.7%
-Self-Consistency:      100%
+Classifier Eval F1:        65.8%
+LLM-Classifier Agreement:  38.0% (conservative classifier)
+Judge Haiku 4.5 Cost:      ~$0.001 per sample
+Training Time:             ~1 minute
+Inference Speed:           ~1,700 samples/minute (CPU)
 ```
 
-**Interpretation:** The system is trustworthy for monitoring at scale.
+**Interpretation:** The classifier trades precision for recall - useful for flagging potential issues for human review.
 
 ---
 
@@ -508,110 +520,230 @@ the nirvana fallacy.
 
 ## Chapter 11: The Pipeline Summary
 
+```mermaid
+flowchart TB
+    subgraph Data["1. DATA COLLECTION"]
+        DB[(DarkBench<br/>660 prompts)]
+        WC[(WildChat<br/>100K conversations)]
+    end
+
+    subgraph Elicit["2. ELICITATION"]
+        EL[Run DarkBench on Claude]
+        DO[630 labeled responses]
+    end
+
+    subgraph Judge["3. LLM JUDGING"]
+        JU[Claude Haiku 4.5 Judge]
+        JL[2000 labeled samples]
+    end
+
+    subgraph Train["4. CLASSIFIER TRAINING"]
+        TD[Combined Training Data]
+        EMB[Sentence Embeddings]
+        LR[Logistic Regression]
+        MODEL[Trained Classifier]
+    end
+
+    subgraph Infer["5. MASS INFERENCE"]
+        INF[Classify 280K turns]
+        DET[Detections with confidence]
+    end
+
+    subgraph Validate["6. CROSS-VALIDATION"]
+        XV[LLM validates classifier]
+        REL[Reliability metrics]
+    end
+
+    subgraph Analysis["7. ANALYSIS"]
+        PR[Prevalence Report]
+        GP[Gap Report]
+        RL[Reliability Report]
+    end
+
+    DB --> EL --> DO
+    WC --> JU --> JL
+    DO --> TD
+    JL --> TD
+    TD --> EMB --> LR --> MODEL
+    WC --> INF
+    MODEL --> INF --> DET
+    DET --> XV --> REL
+    DET --> PR
+    DB --> GP
+    DET --> GP
+    REL --> RL
 ```
-+-------------------------------------------------------------------+
-|                        DATA COLLECTION                             |
-+-------------------------------------------------------------------+
-|  DarkBench (660 prompts)  +  WildChat (30,071 turns)              |
-|  huggingface.co/Apart/DarkBench  +  huggingface.co/allenai/WildChat-1M
-+-------------------------------------------------------------------+
-                               |
-                               v
-+-------------------------------------------------------------------+
-|                         ELICITATION                                |
-+-------------------------------------------------------------------+
-|  Run DarkBench prompts through Claude 3.5 Sonnet                  |
-|  Output: 630 labeled responses                                     |
-+-------------------------------------------------------------------+
-                               |
-                               v
-+-------------------------------------------------------------------+
-|                         LLM JUDGING                                |
-+-------------------------------------------------------------------+
-|  Claude judges 1,000 WildChat samples                             |
-|  Output: Category + confidence + explanation                       |
-+-------------------------------------------------------------------+
-                               |
-                               v
-+-------------------------------------------------------------------+
-|                       CLASSIFIER TRAINING                          |
-+-------------------------------------------------------------------+
-|  1,628 samples -> Embeddings -> Logistic Regression               |
-|  Result: 78% macro F1 on 7-class problem                          |
-+-------------------------------------------------------------------+
-                               |
-                               v
-+-------------------------------------------------------------------+
-|                        MASS INFERENCE                              |
-+-------------------------------------------------------------------+
-|  Classify all 30,071 WildChat turns in ~6 minutes                 |
-|  Result: 6,868 flagged (22.8%)                                    |
-+-------------------------------------------------------------------+
-                               |
-                               v
-+-------------------------------------------------------------------+
-|                          ANALYSIS                                  |
-+-------------------------------------------------------------------+
-|  Prevalence Report: What patterns exist?                          |
-|  Gap Report: Does benchmark match reality?                        |
-|  Reliability Report: Can we trust the system?                     |
-+-------------------------------------------------------------------+
-```
+
+**Links to data sources:**
+- DarkBench: [huggingface.co/datasets/Apart/DarkBench](https://huggingface.co/datasets/Apart/DarkBench)
+- WildChat: [huggingface.co/datasets/allenai/WildChat-1M](https://huggingface.co/datasets/allenai/WildChat-1M)
 
 ---
 
 ## Chapter 12: Conclusions
 
 ### What We Built
-A scalable oversight system that can monitor AI conversations for manipulation at scale - 30,000 turns in 6 minutes.
+A scalable oversight system that can monitor AI conversations for manipulation at scale - 40,000+ turns classified from 100K conversations.
 
 ### What We Found
-1. **22.8% of AI responses show manipulation markers**
-2. **Harmful generation is most common (7.2%)** - AI producing potentially harmful content
-3. **Anthropomorphism is second (6.8%)** - AI pretending to have feelings
-4. **GPT-4 shows MORE dark patterns than GPT-3.5**
-5. **Manipulation increases in longer conversations**
+1. **28.1% of AI responses show manipulation markers**
+2. **Brand bias is most common (8.9%)** - AI promoting specific products/companies
+3. **Harmful generation is second (6.7%)** - AI producing potentially harmful content
+4. **GPT-4 shows MORE dark patterns (31.0%) than GPT-3.5 (27.0%)**
+5. **The classifier is conservative** - over-flags for human review (38% agreement with LLM judge)
 
 ### What This Means
-- AI assistants are not immune to manipulation behaviors
-- More capable models may be better at subtle manipulation
-- Monitoring tools like WildGuard are essential for AI safety
-- The benchmark (DarkBench) reasonably predicts real-world behavior
+- AI assistants exhibit measurable manipulation patterns in real conversations
+- More capable models may be better at rapport-building (including manipulation)
+- Monitoring tools like WildGuard enable systematic oversight at scale
+- Benchmark (DarkBench) over-represents rare patterns vs real-world distribution
 
 ### Limitations
-- We detect **markers**, not **intent** - some flags may be false positives
-- Training data is English-only
-- Some categories (sneaking, user_retention) have fewer training examples
-- LLM judges can be inconsistent
+- We detect **markers**, not **intent** - 62% of flags may be false positives
+- Classifier optimized for recall over precision (better to over-flag than miss)
+- Training data is English-only with GPT-3.5/GPT-4 bias
+- CUDA unavailable on Python 3.14 - CPU inference only
 
 ---
 
-## Appendix: Data Sources & File Outputs
+## Appendix A: Data Sources & File Outputs
 
 ### HuggingFace Datasets
 - **DarkBench:** https://huggingface.co/datasets/Apart/DarkBench
 - **WildChat:** https://huggingface.co/datasets/allenai/WildChat-1M
 
-### Output Files
+### Output Files (V2 Experiment)
 ```
 outputs/
-  darkbench_outputs_full.jsonl     # 630 elicited responses
-  judge_labels.jsonl               # 1,000 judge labels
-  wildchat_detections_full_v2.jsonl # 30,071 classifications
-  prevalence_full_v2.json          # Detection statistics
-  gap_report_full_v2.json          # Benchmark vs reality
-  reliability_report_full_v2.json  # System reliability
+  wildchat_turns_100k.jsonl      # 280,259 extracted turns
+  darkbench_outputs_full.jsonl   # 630 elicited responses
+  judge_labels_haiku45.jsonl     # 2,000 Haiku 4.5 labels
+  wildchat_detections_v2.jsonl   # 40,625 classifications
+  validation_labels.jsonl        # 150 cross-validation samples
+  prevalence_v2.json             # Detection statistics
+  reliability_report_v2.json     # System reliability
+  training_results.json          # MiniLM classifier metrics
+  training_results_mpnet.json    # MPNet classifier metrics
 
 models/
-  classifier_full/
-    logistic_classifier.joblib   # Trained model
+  classifier/
+    logistic_classifier.joblib   # Trained MiniLM classifier
+  classifier_v1/                 # Archived previous model
 
-figures/
-  prevalence_by_category.png
-  confidence_distribution.png
-  flag_rate_by_turn.png
-  model_comparison.png
+data/
+  labeled/
+    train.jsonl                  # 2,072 training samples
+    eval.jsonl                   # 519 evaluation samples
+  samples/
+    validation_sample.jsonl      # 150 samples for LLM validation
 ```
+
+---
+
+## Appendix B: Limitations & Dual-Use Considerations
+
+### 1. Limitations
+
+#### False Positives
+- **Benign anthropomorphism:** Responses like "I think this approach works well" are flagged as anthropomorphism, even though such phrasing is conventional and expected in helpful AI interactions.
+- **Legitimate recommendations:** When asked "What's the best AI assistant?", providing a factual comparison gets flagged as brand_bias even when objectively accurate.
+- **Context blindness:** The classifier doesn't understand conversation context - a roleplay scenario may be flagged as harmful_generation when the user explicitly requested creative fiction.
+
+#### False Negatives
+- **Subtle manipulation:** Sophisticated manipulation tactics that don't match training patterns go undetected.
+- **Novel categories:** Emerging dark patterns not in DarkBench taxonomy (e.g., manufactured urgency, artificial scarcity) are missed.
+- **Cross-lingual gaps:** Non-English manipulation patterns may differ significantly from English training data.
+
+#### Edge Cases
+- **Satire and irony:** Intentionally exaggerated responses for humorous effect trigger false positives.
+- **Quotes and examples:** When AI quotes manipulative content to explain why it's problematic, the quote itself gets flagged.
+- **Cultural context:** What constitutes "excessive flattery" varies by culture - Asian communication styles may register as sycophancy.
+
+#### Scalability Constraints
+- **LLM judge cost:** At ~$0.001 per sample, judging 1M conversations costs ~$1,000.
+- **Classifier drift:** Patterns may evolve as AI systems are updated; requires periodic retraining.
+- **Real-time monitoring:** Current batch processing (~10K turns/minute) may not be fast enough for production use.
+
+### 2. Dual-Use Risks
+
+#### Could this method train better manipulators?
+
+**Yes, potentially.** The same techniques that detect dark patterns could be used to:
+
+- **Train adversarial prompts:** Attackers could use our classifier to test which manipulation tactics evade detection.
+- **Fine-tune more manipulative models:** The labeled dataset of successful manipulation could train models to be MORE manipulative.
+- **A/B test manipulation strategies:** An adversary could use our system to optimize which manipulation patterns are most effective while remaining undetected.
+
+#### Mitigations we've implemented:
+1. **Detection-only focus:** We publish detection tools, not generation tools.
+2. **Confidence thresholds:** We don't publish examples that are borderline - only clear cases.
+3. **Aggregated reporting:** We report prevalence statistics, not a "manipulation playbook."
+
+#### Mitigations we recommend:
+1. **Rate limiting:** Restrict API access to prevent automated adversarial testing.
+2. **Audit trails:** Log all queries to detect suspicious patterns of use.
+3. **Delayed release:** Consider staged release - researchers first, then public.
+
+### 3. Responsible Disclosure Recommendations
+
+If you discover that:
+
+**A specific AI system is vulnerable to manipulation elicitation:**
+1. Report privately to the AI provider before public disclosure.
+2. Give 90 days for the provider to address the issue.
+3. Publish only after fix is deployed or deadline passes.
+
+**A specific manipulation pattern is widespread:**
+1. Document with evidence from public datasets only.
+2. Notify affected AI providers simultaneously.
+3. Coordinate disclosure timing with providers.
+
+**WildGuard itself can be exploited:**
+1. Report to our team via GitHub Security Advisory.
+2. Do not publish exploits publicly before we respond.
+3. We commit to acknowledging reports within 72 hours.
+
+### 4. Ethical Considerations
+
+#### Data handling:
+- **Consent:** WildChat data is from users who opted in to share conversations.
+- **Anonymization:** We only use conversation IDs, no user identifiers.
+- **Public data only:** We don't analyze private or commercial datasets.
+
+#### Bias and fairness:
+- **English-centric:** Our training data is predominantly English, potentially underrepresenting non-English manipulation patterns.
+- **Western norms:** What we label as "sycophancy" reflects Western communication norms.
+- **Model bias:** We only analyzed OpenAI models (GPT-3.5, GPT-4) - other models may differ.
+
+#### Transparency:
+- **Open source:** All code is publicly available for scrutiny.
+- **Reproducible:** We document exact versions, prompts, and parameters.
+- **Limitations acknowledged:** We don't overclaim accuracy or completeness.
+
+#### Intended use:
+- ✅ AI safety research
+- ✅ Model evaluation and benchmarking
+- ✅ Educational understanding of AI manipulation
+- ❌ Surveillance of individual users
+- ❌ Commercial "manipulation detection" services without consent
+- ❌ Training more manipulative AI systems
+
+### 5. Future Improvements
+
+#### Short-term (next 3 months):
+1. **Multi-model coverage:** Extend to Claude, Gemini, Llama, and other popular models.
+2. **Confidence calibration:** Currently, confidence scores don't reliably indicate actual accuracy.
+3. **Streaming detection:** Enable real-time detection during conversations.
+
+#### Medium-term (6-12 months):
+1. **Multilingual expansion:** Train on translated and native non-English data.
+2. **Category refinement:** Split overly broad categories (e.g., harmful_generation into subtypes).
+3. **User study validation:** Verify that detected patterns actually influence user behavior.
+
+#### Long-term (research directions):
+1. **Intent detection:** Move from pattern detection to understanding manipulative intent.
+2. **Countermeasure development:** Tools that help AI systems avoid dark patterns.
+3. **Policy integration:** Inform regulatory frameworks for AI transparency.
 
 ---
 

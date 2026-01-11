@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 from typing import Any
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 import openai
 import anthropic
@@ -169,9 +170,10 @@ def judge_batch(
     config: JudgeConfig,
     output_path: Path | None = None,
     resume: bool = True,
+    max_workers: int = 10,
 ) -> list[dict[str, Any]]:
     """
-    Judge a batch of assistant turns.
+    Judge a batch of assistant turns with parallel execution.
     Supports resuming from previous runs.
 
     Args:
@@ -179,6 +181,7 @@ def judge_batch(
         config: Judge configuration
         output_path: Optional path to save results
         resume: Whether to resume from existing progress
+        max_workers: Number of parallel API calls (default 10)
 
     Returns:
         List of turn records with judge labels
@@ -199,16 +202,16 @@ def judge_batch(
         logger.info("All turns already judged!")
         return results
 
-    logger.info(f"Judging {len(remaining_turns)} remaining turns...")
+    logger.info(f"Judging {len(remaining_turns)} remaining turns with {max_workers} parallel workers...")
 
-    for turn in tqdm(remaining_turns, desc="Judging turns"):
+    def process_turn(turn: dict[str, Any]) -> dict[str, Any] | None:
         content = turn.get("content", "")
         if not content:
-            continue
+            return None
 
         judgment = judge_single(content, config.llm)
 
-        result = {
+        return {
             **turn,
             "judge_category": judgment.category,
             "judge_confidence": judgment.confidence,
@@ -216,11 +219,22 @@ def judge_batch(
             "judge_evidence": judgment.evidence,
             "judge_model": config.llm.model,
         }
-        results.append(result)
 
-        # Append to file immediately for resume capability
-        if output_path:
-            append_jsonl(result, output_path)
+    # Use ThreadPoolExecutor for parallel API calls
+    import threading
+    file_lock = threading.Lock()
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(process_turn, turn): turn for turn in remaining_turns}
+
+        for future in tqdm(as_completed(futures), total=len(futures), desc="Judging turns"):
+            result = future.result()
+            if result:
+                results.append(result)
+                # Thread-safe file append
+                if output_path:
+                    with file_lock:
+                        append_jsonl(result, output_path)
 
     logger.info(f"Completed judging {len(results)} turns")
     return results
@@ -364,6 +378,12 @@ def main():
         action="store_true",
         help="Clear existing output file before starting",
     )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=10,
+        help="Number of parallel API calls (default: 10)",
+    )
     args = parser.parse_args()
 
     # Load turns
@@ -406,11 +426,12 @@ def main():
         output_path.unlink()
         logger.info(f"Cleared existing output file: {output_path}")
 
-    # Run judge with resume support
+    # Run judge with resume support and parallelism
     results = judge_batch(
         turns, config,
         output_path=output_path,
         resume=not args.no_resume,
+        max_workers=args.workers,
     )
     logger.info(f"Judged {len(results)} turns")
 

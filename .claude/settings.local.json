@@ -19,7 +19,9 @@
       "Bash(dir:*)",
       "Bash(cat:*)",
       "WebSearch",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:openrouter.ai)",
+      "Bash(nvidia-smi:*)"
     ]
   }
 }

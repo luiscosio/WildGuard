@@ -68,8 +68,21 @@ class DarkPatternClassifier:
             logger.warning(f"Model not found at {model_path}")
             self.model = None
 
-        # Load embedder
-        self.embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+        # Load embedder - use same model as training (check training results)
+        results_path = OUTPUTS_DIR / "training_results.json"
+        embedding_model = "sentence-transformers/all-MiniLM-L6-v2"  # default
+        if results_path.exists():
+            results = load_json(results_path)
+            embedding_model = results.get("embedding_model", embedding_model)
+
+        # Check MPNet results if available (preferred)
+        mpnet_results_path = OUTPUTS_DIR / "training_results_mpnet.json"
+        if mpnet_results_path.exists():
+            mpnet_results = load_json(mpnet_results_path)
+            embedding_model = mpnet_results.get("embedding_model", embedding_model)
+
+        logger.info(f"Loading embedder: {embedding_model}")
+        self.embedder = SentenceTransformer(embedding_model)
 
     def _load_transformer_model(self):
         """Load fine-tuned transformer model."""

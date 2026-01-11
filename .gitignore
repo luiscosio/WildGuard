@@ -102,3 +102,7 @@ logs/
 
 # Notebooks outputs
 notebooks/*.html
+
+# Release packages (large zip files)
+release/
+*.zip

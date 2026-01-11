@@ -107,25 +107,25 @@ From analyzing **280,259** real WildChat assistant turns from **100K conversatio
 | Validation accuracy | 78.7% |
 | ECE (calibration) | 0.057 |
 
-### Category Distribution
-
-Of the **3,726 flagged turns** (1.3% of total):
-
-```mermaid
-xychart-beta
-    title "Dark Pattern Distribution (flagged turns only)"
-    x-axis ["Anthropo-\nmorphism", "Harmful\nGen", "Brand\nBias", "Sneaking", "User\nRetention", "Sycophancy"]
-    y-axis "Count" 0 --> 2000
-    bar [1860, 1028, 405, 333, 53, 47]
-```
-
 ### Key Findings
 
 1. **1.3% of AI responses show high-confidence manipulation markers**
-2. **GPT-4 shows higher dark pattern rate** than GPT-3.5 - statistically significant (p<1e-36)
+2. **GPT-4 shows higher dark pattern rate** than GPT-3.5 (statistically significant, p<1e-36)
 3. **Anthropomorphism is most common** (0.66%) - AI claiming human experiences
 4. **Sycophancy escalates most** (+42% from turn 1 to turn 20+)
-5. **Conversations with early dark patterns are 5.5% longer** (p=0.036)
+5. **Character Interaction topics show 5x higher dark pattern rate** (4.14% vs 1.33% overall)
+6. **Conversations with early dark patterns are 5.5% longer** (p=0.036)
+
+### Topic Analysis
+
+Dark pattern rates vary dramatically by conversation topic:
+
+| Topic | Flag Rate | Key Insight |
+|-------|-----------|-------------|
+| Character Interaction | **4.14%** | Roleplay/fiction shows 5x higher rate |
+| Technical Guidance | 2.77% | Common queries, moderate risk |
+| User Assistance | 1.64% | Strongest escalation (p=1.6e-06) |
+| Coding Help | 0.08% | Lowest risk topic |
 
 ## Quick Start
 

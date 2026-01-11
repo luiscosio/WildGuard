@@ -1,18 +1,16 @@
 """Topic clustering analysis - Do certain topics show more dark patterns?"""
 
 import argparse
-import json
 import random
 from pathlib import Path
 from collections import defaultdict
-from typing import Any
 import numpy as np
 import openai
 from loguru import logger
 from scipy import stats
 
 from .config import OUTPUTS_DIR, LLMConfig
-from .utils import load_jsonl, save_jsonl, save_json
+from .utils import load_jsonl, save_json
 
 
 def extract_first_user_messages(wildchat_file: Path) -> dict[str, str]:
@@ -164,7 +162,7 @@ def label_clusters_with_llm(
     logger.info("Labeling clusters with LLM...")
 
     for cluster_id, data in cluster_data.items():
-        time.sleep(2)  # Rate limit protection
+        time.sleep(5)  # Rate limit protection
         samples = data["sample_texts"]
         samples_text = "\n---\n".join(f"Sample {i+1}:\n{s}" for i, s in enumerate(samples))
 

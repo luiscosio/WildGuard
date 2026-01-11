@@ -23,7 +23,10 @@ st.set_page_config(
 
 def load_sample_data():
     """Load sample detection data for demo."""
-    detections_path = OUTPUTS_DIR / "wildchat_detections.jsonl"
+    # Try V5 path first
+    detections_path = OUTPUTS_DIR / "v5" / "wildchat_detections_v5b.jsonl"
+    if not detections_path.exists():
+        detections_path = OUTPUTS_DIR / "wildchat_detections.jsonl"  # Fallback
     if detections_path.exists():
         return load_jsonl(detections_path)
 
@@ -44,17 +47,29 @@ def load_reports():
     """Load analytics reports."""
     reports = {}
 
-    prevalence_path = OUTPUTS_DIR / "prevalence.json"
-    if prevalence_path.exists():
-        reports["prevalence"] = load_json(prevalence_path)
+    # Try V5 paths first, fallback to root outputs
+    analytics_path = OUTPUTS_DIR / "v5" / "analytics_v5b.json"
+    if not analytics_path.exists():
+        analytics_path = OUTPUTS_DIR / "prevalence.json"
+    if analytics_path.exists():
+        reports["prevalence"] = load_json(analytics_path)
 
-    gap_path = OUTPUTS_DIR / "gap_report.json"
+    gap_path = OUTPUTS_DIR / "v5" / "gap_report.json"
+    if not gap_path.exists():
+        gap_path = OUTPUTS_DIR / "gap_report.json"
     if gap_path.exists():
         reports["gap"] = load_json(gap_path)
 
-    reliability_path = OUTPUTS_DIR / "reliability_report.json"
+    reliability_path = OUTPUTS_DIR / "v5" / "reliability_report.json"
+    if not reliability_path.exists():
+        reliability_path = OUTPUTS_DIR / "reliability_report.json"
     if reliability_path.exists():
         reports["reliability"] = load_json(reliability_path)
+
+    # Topic analysis
+    topic_path = OUTPUTS_DIR / "v5" / "topic_analysis.json"
+    if topic_path.exists():
+        reports["topic"] = load_json(topic_path)
 
     return reports
 

@@ -8,6 +8,18 @@ We set out to answer this question by analyzing 100,000 real conversations betwe
 
 > **Note:** Highly recommended to see our [website first](https://wildguard.luiscos.io/) and for a detailed history of our experiments and what worked/didn't work, see [CHANGELOG.md](CHANGELOG.md).
 
+### Download Pre-trained Models and Data
+
+Skip training and use our pre-trained classifier and detection results:
+
+| File | Description | Download |
+|------|-------------|----------|
+| **Models** | Pre-trained dark pattern classifier | [wildguard_models.zip](https://wildguard.luiscos.io/release/wildguard_models.zip) |
+| **Data** | Detection results and analytics | [wildguard_data.zip](https://wildguard.luiscos.io/release/wildguard_data.zip) |
+| **Training** | Labeled training data | [wildguard_training.zip](https://wildguard.luiscos.io/release/wildguard_training.zip) |
+
+Extract to `models/`, `outputs/`, and `data/` directories respectively.
+
 
 ## Chapter 2: The Data Sources
 
@@ -516,7 +528,61 @@ Early Flag Analysis (turns 1-3):
 **Key finding:** Conversations with early dark patterns are **5.5% longer** on average. The correlation between flag count and conversation length (r=0.14) is weak but statistically significant. This suggests some relationship between dark patterns and engagement.
 
 
-## Chapter 9: Validation
+## Chapter 9: Topic Analysis
+
+We clustered 98,713 conversations into 10 topics using sentence embeddings + KMeans clustering to answer: **Do certain topics show more dark patterns?**
+
+### Methodology
+
+1. **Embed first turns** - Used MiniLM to embed the first assistant response from each conversation
+2. **Cluster** - KMeans with 10 clusters to group similar conversations
+3. **Label** - Used Claude Haiku 4.5 to generate descriptive topic labels from sample texts
+4. **Analyze** - Computed flag rate and escalation slope per cluster
+
+### Results by Topic
+
+| Topic | Conversations | Flag Rate | Escalation | p-value |
+|-------|---------------|-----------|------------|---------|
+| Character Interaction | 14,188 | **4.14%** | +0.15/1k turns | 0.404 |
+| Technical Guidance | 21,108 | 2.77% | -0.12/1k turns | 0.096 |
+| Content Access Restrictions | 7,558 | 2.64% | +0.23/1k turns | 0.060 |
+| User Assistance | 1,754 | 1.64% | **+0.86/1k turns** | **1.62e-06** |
+| Roleplay/Fiction | 2,564 | 0.20% | +0.45/1k turns | 6.10e-04 |
+| Language Translation | 7,276 | 0.10% | +0.01/1k turns | 0.667 |
+| Social Interaction Tips | 9,643 | 0.09% | +0.02/1k turns | 0.409 |
+| Coding Help | 11,984 | 0.08% | +0.07/1k turns | 0.003 |
+| Practical Advice | 9,233 | 0.07% | +0.07/1k turns | 0.009 |
+| Gift-Giving Advice | 13,405 | 0.07% | +0.04/1k turns | 0.072 |
+
+### Key Insights
+
+1. **Character Interaction has 5x higher dark pattern rate** (4.14% vs 1.33% overall)
+   - These are roleplay and fiction conversations where users ask the AI to play characters
+   - Anthropomorphism naturally occurs when AI takes on persona roles
+   - This is expected behavior, but worth monitoring for manipulation
+
+2. **User Assistance shows strongest escalation** (p=1.62e-06)
+   - Dark patterns increase significantly as these conversations progress
+   - Possible explanation: AI becomes more "helpful" in ways that cross into sycophancy
+
+3. **Coding Help has lowest dark pattern rate** (0.08%)
+   - Technical, factual responses leave little room for manipulation
+   - This validates that dark patterns are context-dependent
+
+4. **Four topics show statistically significant escalation**
+   - User Assistance (p=1.62e-06)
+   - Roleplay/Fiction (p=6.10e-04)
+   - Coding Help (p=0.003)
+   - Practical Advice (p=0.009)
+
+### Implications
+
+- **Monitoring should prioritize character/roleplay conversations** - 5x baseline risk
+- **Long user assistance conversations need attention** - strongest escalation signal
+- **Technical topics are lower risk** - but not zero risk
+
+
+## Chapter 10: Validation
 
 ### Does DarkBench Predict Reality?
 
@@ -566,7 +632,7 @@ brand_bias        |       ~0%           | <0.0001  | Stable
 **Key finding:** Sycophancy shows the steepest escalation (+42%), while harmful_generation actually *decreases* in longer conversations (-41%). This makes sense: sycophancy builds over time as the AI "learns" what the user wants to hear, while harmful content tends to appear early (in jailbreak attempts) or not at all.
 
 
-## Chapter 10: Additional Real Examples
+## Chapter 11: Additional Real Examples
 
 This chapter provides additional examples with full conversation context.
 
@@ -704,7 +770,7 @@ Translation: "In MATLAB, you can use the step function to get the unit step resp
 **Judge reasoning:** This is a model response - direct, technical, and helpful. The AI provides clear code with explanations, answers exactly what was asked, and uses no manipulation tactics. No flattery, no emotional language, no false claims about AI capabilities. This is what a helpful AI assistant should look like.
 
 
-## Chapter 11: The Pipeline Summary
+## Chapter 12: The Pipeline Summary
 
 ```mermaid
 flowchart TB
@@ -765,7 +831,7 @@ flowchart TB
 - WildChat: [huggingface.co/datasets/allenai/WildChat-1M](https://huggingface.co/datasets/allenai/WildChat-1M)
 
 
-## Chapter 12: Conclusions
+## Chapter 13: Conclusions
 
 ### What We Built
 A scalable oversight system that can monitor AI conversations for manipulation at scale - 280,000+ turns classified from 100K conversations, with statistical validation of findings.
@@ -775,9 +841,10 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 2. **Anthropomorphism is most common (0.66%)** - AI claiming human experiences/emotions
 3. **GPT-4 shows MORE dark patterns than GPT-3.5** - statistically significant (p<1e-36)
 4. **Dark patterns escalate in longer conversations** - sycophancy increases +42% from turn 1 to turn 20+
-5. **Conversations with early dark patterns are 5.5% longer** - weak but significant correlation
-6. **Classifier confidence is well-calibrated** - ECE of 0.057, 78.7% validation accuracy
-7. **Per-category escalation varies** - sycophancy escalates most (+42%), harmful_generation decreases (-41%)
+5. **Character Interaction topics show 5x higher dark pattern rate** (4.14% vs 1.33% overall)
+6. **User Assistance conversations show strongest escalation** - statistically significant (p=1.62e-06)
+7. **Conversations with early dark patterns are 5.5% longer** - weak but significant correlation
+8. **Classifier confidence is well-calibrated** - ECE of 0.057, 78.7% validation accuracy
 
 ### What This Means
 - AI assistants exhibit measurable manipulation patterns in real conversations
@@ -792,7 +859,15 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 - Need more human validation to confirm statistical findings
 
 
-## Appendix A: Data Sources & File Outputs
+## Appendix A: Data Sources & Downloads
+
+### Download Pre-trained Models and Data
+
+| File | Description | Download |
+|------|-------------|----------|
+| **Models** | Pre-trained dark pattern classifier | [wildguard_models.zip](https://wildguard.luiscos.io/release/wildguard_models.zip) |
+| **Data** | Detection results and analytics (V5) | [wildguard_data.zip](https://wildguard.luiscos.io/release/wildguard_data.zip) |
+| **Training** | Labeled training data (2,448 samples) | [wildguard_training.zip](https://wildguard.luiscos.io/release/wildguard_training.zip) |
 
 ### HuggingFace Datasets
 - **DarkBench:** https://huggingface.co/datasets/Apart/DarkBench
@@ -800,12 +875,10 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 
 ### Output Files
 ```
-outputs/
-  wildchat_turns_100k.jsonl      # 280,259 extracted turns
-  darkbench_outputs_full.jsonl   # 630 elicited responses
-  judge_labels_haiku45.jsonl     # LLM judge labels
-  wildchat_detections.jsonl      # 280,259 classifications (all turns)
-  analytics.json                 # Full analytics with statistical tests
+outputs/v5/
+  wildchat_detections_v5b.jsonl  # 280,259 classifications
+  analytics_v5b.json             # Analytics with statistical tests
+  topic_analysis.json            # Topic clustering results
   training_results.json          # Classifier metrics
 
 models/
@@ -814,10 +887,8 @@ models/
 
 data/
   labeled/
-    train.jsonl                  # Training samples
+    train_v5b.jsonl              # Training samples (2,448)
     eval.jsonl                   # Evaluation samples
-  samples/
-    validation_sample.jsonl      # Samples for LLM validation
 ```
 
 

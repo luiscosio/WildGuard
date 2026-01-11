@@ -41,14 +41,35 @@ Improve classifier precision via targeted false positive correction from V3's de
 ### Key Insight
 V3's false positives were concentrated in user_retention and sycophancy categories. V5's corrections dramatically reduced these over-detections while maintaining overall precision.
 
+### Topic Analysis (6b)
+Clustered 98,713 conversations into 10 topics using embeddings + KMeans to analyze dark pattern rates by topic.
+
+| Topic | Conversations | Flag Rate | Escalation | Significant |
+|-------|---------------|-----------|------------|-------------|
+| Character Interaction | 14,188 | **4.14%** | +0.15/1k | No |
+| Technical Guidance | 21,108 | 2.77% | -0.12/1k | No |
+| Content Access Restrictions | 7,558 | 2.64% | +0.23/1k | No |
+| User Assistance | 1,754 | 1.64% | **+0.86/1k** | **Yes** (p=1.6e-06) |
+| Roleplay/Fiction | 2,564 | 0.20% | +0.45/1k | Yes |
+| Coding Help | 11,984 | 0.08% | +0.07/1k | Yes |
+| Gift-Giving Advice | 13,405 | 0.07% | +0.04/1k | No |
+
+Key findings:
+- **Character Interaction** (roleplay/fiction) has 4.14% dark pattern rate - 5x higher than overall 1.33%
+- **User Assistance** shows strongest escalation (p=1.62e-06)
+- Four clusters show statistically significant escalation
+- Coding Help has lowest dark pattern rate (0.08%)
+
 ### New Files
 - `src/sample_flagged.py` - Sample flagged turns for judge verification
 - `src/prepare_v5_data.py` - Full V5 data preparation (with all corrections)
 - `src/prepare_v5b_data.py` - Balanced V5 data preparation (selective corrections)
+- `src/topic_analysis.py` - Topic clustering and per-topic dark pattern analysis
 - `data/labeled/train_v5b.jsonl` - V5 training data (2,448 samples)
 - `outputs/v5_judge_labels.jsonl` - Judge verification of V3 flags
 - `outputs/wildchat_detections_v5b.jsonl` - V5 classifications on 280K turns
 - `outputs/analytics_v5b.json` - V5 analytics report
+- `outputs/v5/topic_analysis.json` - Topic clustering results
 
 
 ## [V4] - 2026-01-11

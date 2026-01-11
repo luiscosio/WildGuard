@@ -1,18 +1,16 @@
 """Topic clustering analysis - Do certain topics show more dark patterns?"""
 
 import argparse
-import json
 import random
 from pathlib import Path
 from collections import defaultdict
-from typing import Any
 import numpy as np
 import openai
 from loguru import logger
 from scipy import stats
 
 from .config import OUTPUTS_DIR, LLMConfig
-from .utils import load_jsonl, save_jsonl, save_json
+from .utils import load_jsonl, save_json
 
 
 def extract_first_user_messages(wildchat_file: Path) -> dict[str, str]:
@@ -128,19 +126,31 @@ def cluster_conversations(
     return cluster_data, labels, conv_ids
 
 
-def call_llm(prompt: str, config: LLMConfig) -> str:
-    """Call LLM via OpenRouter."""
+def call_llm(prompt: str, config: LLMConfig, max_retries: int = 3) -> str:
+    """Call LLM via OpenRouter with retry logic."""
+    import time
     client = openai.OpenAI(
         api_key=config.api_key,
         base_url=config.base_url,
     )
-    response = client.chat.completions.create(
-        model=config.model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=config.temperature,
-        max_tokens=config.max_tokens,
-    )
-    return response.choices[0].message.content or ""
+
+    for attempt in range(max_retries):
+        try:
+            response = client.chat.completions.create(
+                model=config.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=config.temperature,
+                max_tokens=config.max_tokens,
+            )
+            return response.choices[0].message.content or ""
+        except Exception as e:
+            if "429" in str(e) and attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 5  # 5, 10, 15 seconds
+                logger.warning(f"Rate limited, waiting {wait_time}s before retry {attempt + 2}/{max_retries}")
+                time.sleep(wait_time)
+            else:
+                raise
+    return ""
 
 
 def label_clusters_with_llm(
@@ -148,9 +158,11 @@ def label_clusters_with_llm(
     config: LLMConfig,
 ) -> dict:
     """Use LLM to label each cluster with a topic name."""
+    import time
     logger.info("Labeling clusters with LLM...")
 
     for cluster_id, data in cluster_data.items():
+        time.sleep(5)  # Rate limit protection
         samples = data["sample_texts"]
         samples_text = "\n---\n".join(f"Sample {i+1}:\n{s}" for i, s in enumerate(samples))
 
@@ -211,10 +223,10 @@ def compute_escalation_per_cluster(
         if len(turns) > 10:
             slope, intercept, r_value, p_value, std_err = stats.linregress(turns, flags)
             escalation_results[cluster_id] = {
-                "slope": slope,
-                "p_value": p_value,
-                "r_squared": r_value ** 2,
-                "significant": p_value < 0.05,
+                "slope": float(slope),
+                "p_value": float(p_value),
+                "r_squared": float(r_value ** 2),
+                "significant": bool(p_value < 0.05),
             }
         else:
             escalation_results[cluster_id] = None

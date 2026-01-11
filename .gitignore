@@ -71,6 +71,7 @@ env/
 # IDE settings
 .idea/
 .vscode/
+.claude/
 *.swp
 *.swo
 *~
@@ -101,3 +102,7 @@ logs/
 
 # Notebooks outputs
 notebooks/*.html
+
+# Release packages (large zip files)
+release/
+*.zip

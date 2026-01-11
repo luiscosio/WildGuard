@@ -1,0 +1,217 @@
+{
+  "prevalence": {
+    "total_samples": 5,
+    "flagged_samples": 3,
+    "flag_rate": 0.6,
+    "prevalence_by_category": {
+      "brand_bias": {
+        "count": 1,
+        "rate": 0.2,
+        "per_1000": 200.0
+      },
+      "user_retention": {
+        "count": 1,
+        "rate": 0.2,
+        "per_1000": 200.0
+      },
+      "sycophancy": {
+        "count": 0,
+        "rate": 0.0,
+        "per_1000": 0.0
+      },
+      "anthropomorphism": {
+        "count": 1,
+        "rate": 0.2,
+        "per_1000": 200.0
+      },
+      "harmful_generation": {
+        "count": 0,
+        "rate": 0.0,
+        "per_1000": 0.0
+      },
+      "sneaking": {
+        "count": 0,
+        "rate": 0.0,
+        "per_1000": 0.0
+      },
+      "none": {
+        "count": 2,
+        "rate": 0.4,
+        "per_1000": 400.0
+      }
+    },
+    "top_categories": [
+      {
+        "category": "none",
+        "count": 2
+      },
+      {
+        "category": "brand_bias",
+        "count": 1
+      },
+      {
+        "category": "user_retention",
+        "count": 1
+      },
+      {
+        "category": "anthropomorphism",
+        "count": 1
+      }
+    ]
+  },
+  "confidence_distribution": {
+    "overall": {
+      "mean": 0.2459734395842391,
+      "std": 0.038361439165245904,
+      "median": 0.2210295837258002,
+      "histogram": {
+        "counts": [
+          0,
+          0,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bin_edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.30000000000000004,
+          0.4,
+          0.5,
+          0.6000000000000001,
+          0.7000000000000001,
+          0.8,
+          0.9,
+          1.0
+        ]
+      }
+    },
+    "by_category": {
+      "brand_bias": {
+        "mean": 0.21706522142181378,
+        "std": 0.0,
+        "median": 0.21706522142181378,
+        "min": 0.21706522142181378,
+        "max": 0.21706522142181378,
+        "count": 1
+      },
+      "user_retention": {
+        "mean": 0.2210295837258002,
+        "std": 0.0,
+        "median": 0.2210295837258002,
+        "min": 0.2210295837258002,
+        "max": 0.2210295837258002,
+        "count": 1
+      },
+      "anthropomorphism": {
+        "mean": 0.20669056912364425,
+        "std": 0.0,
+        "median": 0.20669056912364425,
+        "min": 0.20669056912364425,
+        "max": 0.20669056912364425,
+        "count": 1
+      },
+      "none": {
+        "mean": 0.29254091182496855,
+        "std": 0.0031556456015581213,
+        "median": 0.29254091182496855,
+        "min": 0.28938526622341043,
+        "max": 0.2956965574265267,
+        "count": 2
+      }
+    }
+  },
+  "turn_index_analysis": {
+    "turn_index_stats": {
+      "1": {
+        "total": 5,
+        "flagged": 3,
+        "flag_rate": 0.6
+      }
+    },
+    "category_by_turn": {
+      "brand_bias": {
+        "1": {
+          "count": 1,
+          "rate": 0.2
+        }
+      },
+      "user_retention": {
+        "1": {
+          "count": 1,
+          "rate": 0.2
+        }
+      },
+      "sycophancy": {
+        "1": {
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "anthropomorphism": {
+        "1": {
+          "count": 1,
+          "rate": 0.2
+        }
+      },
+      "harmful_generation": {
+        "1": {
+          "count": 0,
+          "rate": 0.0
+        }
+      },
+      "sneaking": {
+        "1": {
+          "count": 0,
+          "rate": 0.0
+        }
+      }
+    },
+    "max_turn_analyzed": 20
+  },
+  "context_analysis": {
+    "context_field": "model",
+    "contexts": {
+      "gpt-4": {
+        "total": 4,
+        "flagged": 3,
+        "flag_rate": 0.75,
+        "top_categories": [
+          {
+            "category": "brand_bias",
+            "count": 1
+          },
+          {
+            "category": "user_retention",
+            "count": 1
+          },
+          {
+            "category": "anthropomorphism",
+            "count": 1
+          },
+          {
+            "category": "none",
+            "count": 1
+          }
+        ]
+      },
+      "claude-2": {
+        "total": 1,
+        "flagged": 0,
+        "flag_rate": 0.0,
+        "top_categories": [
+          {
+            "category": "none",
+            "count": 1
+          }
+        ]
+      }
+    }
+  }
+}

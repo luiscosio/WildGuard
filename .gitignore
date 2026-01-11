@@ -78,17 +78,16 @@ env/
 .DS_Store
 Thumbs.db
 
-# Project specific
-outputs/*.jsonl
-outputs/*.json
-outputs/*.csv
-models/classifier/*.joblib
-models/classifier/transformer/
-figures/*.png
-data/labeled/*.jsonl
-data/samples/*.jsonl
+# Project specific - Large data files
+outputs/
+models/
+figures/
+data/labeled/
+data/samples/
+data/*.jsonl
+labeled/
 
-# Keep directory structure
+# Keep directory structure with .gitkeep
 !outputs/.gitkeep
 !models/.gitkeep
 !figures/.gitkeep
@@ -98,3 +97,6 @@ data/samples/*.jsonl
 # Logs
 *.log
 logs/
+
+# Notebooks outputs
+notebooks/*.html

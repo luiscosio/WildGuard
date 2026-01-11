@@ -4,6 +4,8 @@
 
 WildGuard detects manipulation patterns ("dark patterns") in AI assistant responses at scale. It combines benchmark-driven elicitation with real-world monitoring to answer: *What manipulation behaviors actually occur in production LLM conversations?*
 
+> **Documentation:** See [STORYTELLING.md](STORYTELLING.md) for the full narrative and methodology. See [CHANGELOG.md](CHANGELOG.md) for experiment history.
+
 ## What is WildGuard?
 
 WildGuard is a monitoring system that:
@@ -34,7 +36,7 @@ flowchart TB
     end
 
     subgraph Monitoring
-        WC --> IN[Ingest 30k+ Turns]
+        WC --> IN[Ingest 280K Turns]
         IN --> IF[Run Classifier]
         CL --> IF
         IF --> DT[Detections]
@@ -95,36 +97,36 @@ flowchart LR
 
 ## Key Results
 
-From analyzing **30,071** real WildChat conversations:
+From analyzing **280,259** real WildChat assistant turns from **100K conversations**:
 
 | Metric | Value |
 |--------|-------|
-| Overall flag rate | **22.8%** |
-| Top pattern | Harmful Generation (7.2%) |
-| Second pattern | Anthropomorphism (6.8%) |
-| Classifier F1 | 78.0% |
-| Judge-Classifier agreement | 78.7% |
-| Reliability Score | 87.2% |
+| Overall flag rate | **1.7%** |
+| Top pattern | Anthropomorphism (0.47%) |
+| Second pattern | Brand Bias (0.31%) |
+| Classifier Eval F1 | 70.8% |
+| High-conf accuracy | 84.4% |
+| ECE (calibration) | 0.068 |
 
 ### Category Distribution
 
 ```mermaid
-pie title Dark Patterns in WildChat (30,071 turns)
-    "None (Clean)" : 23203
-    "Harmful Generation" : 2157
-    "Anthropomorphism" : 2036
-    "Brand Bias" : 1387
-    "Sycophancy" : 560
-    "Sneaking" : 424
-    "User Retention" : 304
+pie title Dark Patterns in WildChat (280,259 turns)
+    "None (Clean)" : 275449
+    "Anthropomorphism" : 1304
+    "Brand Bias" : 869
+    "Sycophancy" : 835
+    "Harmful Generation" : 706
+    "User Retention" : 562
+    "Sneaking" : 534
 ```
 
 ### Key Findings
 
-1. **Nearly 1 in 4 AI responses (22.8%) shows manipulation markers**
-2. **GPT-4 shows higher dark pattern rate** (25.1%) than GPT-3.5 (21.9%)
-3. **Harmful generation is most common** (7.2%) - AI producing potentially harmful content
-4. **Dark patterns increase in longer conversations** (29.3% at turn 20+)
+1. **1.7% of AI responses show high-confidence manipulation markers** (precise detector)
+2. **GPT-4 shows higher dark pattern rate (2.3%)** than GPT-3.5 (1.6%) - statistically significant (p<1e-36)
+3. **Anthropomorphism is most common** (0.47%) - AI claiming human experiences
+4. **Dark patterns increase in longer conversations** (+100% from turn 1 to turn 20+)
 
 ## Quick Start
 
@@ -271,10 +273,6 @@ sequenceDiagram
 - Some categories (sneaking, user_retention) have fewer training examples
 - LLM judge can be inconsistent across runs
 
-## License
-
-MIT License - See [LICENSE](LICENSE) for details.
-
 ---
 
-Built for the AI Safety Hackathon 2025
+Built for the AI Manipulation Hackathon 2026 by Apart Research

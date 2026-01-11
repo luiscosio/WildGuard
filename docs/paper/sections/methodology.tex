@@ -1,0 +1,31 @@
+\section{Methodology / System Design}
+\subsection{Data sources}
+DarkPatternMonitor draws from two complementary sources. \textbf{DarkBench} provides 660 elicitation prompts across six dark pattern categories and is used to generate labeled responses for supervised training \citep{darkbench2025}. \textbf{WildChat} supplies opt-in real-world conversations (assistant turns) for large-scale monitoring and evaluation \citep{wildchat2024}. The project documentation reports ingestion of 100k conversations yielding 280,259 assistant turns.
+
+\subsection{Labeling strategy}
+The system combines three labeling signals:
+\begin{enumerate}[leftmargin=1.5em]
+  \item \textbf{Benchmark labels:} DarkBench prompts define known categories for elicited responses.
+  \item \textbf{LLM-judge labels:} A rubric-based judge (default: Claude Haiku 4.5 via OpenRouter) assigns categories, confidence, and evidence for sampled WildChat turns.
+  \item \textbf{Disagreement mining:} High-confidence judge disagreements with the classifier are mined to correct false positives and category mismatches in subsequent training iterations.
+\end{enumerate}
+
+\subsection{Modeling and inference}
+The default classifier is an embedding-based model: SentenceTransformer embeddings (MiniLM) with a balanced logistic regression head. This design trades marginal accuracy for high throughput and easy calibration. The classifier outputs a predicted category and confidence for each assistant turn. Inference is batched and resumable, enabling millions of turns to be processed in offline monitoring mode.
+
+\subsection{Reporting and analysis}
+Downstream analytics compute:
+\begin{itemize}[leftmargin=1.25em]
+  \item prevalence by category and confidence distribution,
+  \item turn-index escalation trends,
+  \item benchmark-to-reality gaps (JS/KL divergence and rank correlation),
+  \item judge-classifier agreement and reliability diagnostics, and
+  \item topic clustering with per-topic flag rates and escalation slopes.
+\end{itemize}
+
+\begin{figure}[t]
+  \centering
+  \input{figures/fig_pipeline.tex}
+  \caption{DarkPatternMonitor pipeline: benchmark elicitation and real-world logging feed labeling, training, inference, and analytics.}
+  \label{fig:pipeline}
+\end{figure}

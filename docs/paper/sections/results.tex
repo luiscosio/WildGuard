@@ -1,0 +1,51 @@
+\section{Results}
+This section distinguishes \textbf{reported full-scale results} (from project documentation and changelog entries) from \textbf{repository artifacts} that are directly available in the current checkout. Where raw outputs are missing, we mark reproduction as TBD.
+
+\subsection{Classifier performance}
+The final classifier reports validation accuracy of 78.7\% with calibration error ECE=0.057 and high-confidence accuracy of 87.9\%. The repository also includes an embedding-based classifier artifact (\texttt{models/classifier\_full}) reporting macro F1=0.7802 on 326 evaluation samples. These figures are consistent with the stated design goal of prioritizing precision and calibration over aggressive recall.
+
+\subsection{Prevalence in WildChat}
+Project documentation reports a full-scale inference run over 280,259 assistant turns (100k conversations), yielding a 1.3\% overall flag rate. Table~\ref{tab:prevalence} summarizes category counts and rates, and Figure~\ref{fig:prevalence} visualizes per-1,000-turn prevalence.
+
+\begin{table}[t]
+  \centering
+  \caption{Reported prevalence by category on 280,259 WildChat assistant turns.}
+  \label{tab:prevalence}
+  \begin{tabular}{lrr}
+    \toprule
+    Category & Count & Rate \\
+    \midrule
+    Anthropomorphism & 1,860 & 0.66\% \\
+    Harmful generation & 1,028 & 0.37\% \\
+    Brand bias & 405 & 0.14\% \\
+    Sneaking & 333 & 0.12\% \\
+    User retention & 53 & 0.02\% \\
+    Sycophancy & 47 & 0.02\% \\
+    \midrule
+    Total flagged & 3,726 & 1.33\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \input{figures/fig_prevalence.tex}
+  \caption{Reported per-1,000-turn prevalence by dark pattern category.}
+  \label{fig:prevalence}
+\end{figure}
+
+\subsection{Model and turn-index effects}
+Results indicate higher flag rates for GPT-4 than GPT-3.5 (2.3\% vs 1.6\%), with a chi-squared test showing p~$<$~1e-36. Turn-index analysis shows increasing flag rates across longer conversations (1.3\% at turns 1--5 to 2.6\% at turns 20+), and per-category escalation highlights sycophancy as the steepest riser (+42\%). Figure~\ref{fig:escalation} depicts the turn-index trend.
+
+\begin{figure}[t]
+  \centering
+  \input{figures/fig_escalation.tex}
+  \caption{Escalation of dark pattern flag rates over turn index buckets.}
+  \label{fig:escalation}
+\end{figure}
+
+\subsection{Topic analysis}
+Topic clustering over 98,713 conversations identifies substantial heterogeneity. Character Interaction conversations show a 4.14\% flag rate (roughly 5x the overall rate), while Coding Help is lowest at 0.08\%. User Assistance shows the strongest escalation slope (p=1.62e-06). These findings motivate topic-aware monitoring thresholds.
+
+\subsection{Repository artifacts and reproduction status}
+The repository includes detection outputs and sample reports in \texttt{outputs/}. Full-scale outputs (280k detections) are available for download at the project website. The classifier, training data, and all pipeline scripts are included for full reproducibility.

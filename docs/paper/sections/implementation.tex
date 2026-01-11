@@ -1,0 +1,12 @@
+\section{Implementation}
+DarkPatternMonitor is implemented as a set of composable Python modules under \texttt{src/} with CLI entrypoints defined in \texttt{pyproject.toml}. The core implementation decisions are aligned with scale, reproducibility, and low operational cost.
+
+\paragraph{Data ingestion.} \texttt{src/ingest\_wildchat.py} streams WildChat via the HuggingFace \texttt{datasets} API, extracts assistant turns with metadata (conversation ID, model, turn index), and supports resumable streaming to JSONL with sampling controls. \texttt{src/run\_darkbench.py} loads DarkBench prompts from HuggingFace and executes elicitation with OpenRouter, OpenAI, or Anthropic clients.
+
+\paragraph{LLM judging.} \texttt{src/judge\_label.py} implements a rubric-based judge prompt with JSON outputs (category, confidence, explanation, evidence). It supports parallel calls, resuming, and a reliability test mode that measures self-consistency across repeated judgements. Demo modes are provided when API keys are absent.
+
+\paragraph{Training pipeline.} The primary training path uses \texttt{src/train\_classifier.py} with SentenceTransformer embeddings and a balanced logistic regression head. Optional transformer fine-tuning is available but secondary. Data preparation scripts (\texttt{prepare\_training\_data.py}, \texttt{prepare\_v5\_data.py}, \texttt{prepare\_v5b\_data.py}) combine benchmark labels, judge labels, and high-confidence corrections from classifier--judge disagreements.
+
+\paragraph{Inference and analytics.} \texttt{src/infer\_wildchat.py} performs batched inference over JSONL turn files and writes predictions with class probabilities for later analysis. \texttt{src/analytics.py} computes prevalence and turn-index trends and emits figures. \texttt{src/gap\_report.py} measures benchmark-vs-reality divergence. \texttt{src/reliability\_report.py} reports judge--classifier agreement and failure modes. \texttt{src/topic\_analysis.py} performs clustering-based topic analysis and per-topic escalation regression.
+
+\paragraph{User interface.} \texttt{app/streamlit\_app.py} provides a lightweight dashboard for interactive inspection of detections and reports, enabling ad hoc scanning of transcripts and visualization of summary metrics.

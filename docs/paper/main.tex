@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{times}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{amsmath, amssymb}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers]{natbib}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black
+}
+
+\title{DarkPatternMonitor: Benchmark-Calibrated Monitoring of Manipulative Behaviors in Real LLM Chat Logs}
+
+\author{
+Fernando Valdovinos\\Independent Researcher\\\texttt{ferchovaldo@gmail.com}
+\and
+Godric Aceves\\Independent Researcher\\\texttt{ricardo.godric@hotmail.com}
+\and
+Ricardo Martinez\\Independent Researcher\\\texttt{odracirdevops@gmail.com}
+\and
+Luis Cosio\\Independent Researcher\\\texttt{luisalfonsocosioizcapa@gmail.com}
+}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+DarkPatternMonitor is a monitoring system for detecting manipulative behaviors in large language model (LLM) assistant responses. The project combines benchmark-driven elicitation (DarkBench) with real-world monitoring (WildChat) to quantify the prevalence, dynamics, and reliability of six dark pattern categories: brand bias, user retention, sycophancy, anthropomorphism, harmful generation, and sneaking. The system pairs an LLM-as-judge labeling stage with a fast embedding-based classifier, then scales inference to hundreds of thousands of assistant turns, producing prevalence, gap, and reliability reports alongside topic and escalation analyses. Project documentation reports that in 280,259 WildChat assistant turns, the overall high-confidence dark-pattern rate is 1.3\% with anthropomorphism and harmful generation as the most prevalent categories. We present the system design, implementation details, and reported findings, while clarifying which artifacts are included in this repository and where reproduction results remain TBD.
+\end{abstract}
+
+\noindent\textbf{Keywords:} AI safety, LLM monitoring, dark patterns, LLM-as-judge, WildChat, DarkBench, behavior auditing
+
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/methodology}
+\input{sections/implementation}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/system_architecture}
+\input{sections/conclusion}
+\input{sections/code_availability}
+\input{sections/limitations}
+\input{sections/ethical}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

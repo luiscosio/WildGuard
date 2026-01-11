@@ -55,7 +55,7 @@
 % No mdash - use hyphens or "to" instead
 \title{DarkPatternMonitor: Dark Pattern Detection in Real LLM Chat Logs}
 \author{
-    Ricardo Mart\'inez \and Godric Aceves\\
+    Fernando \and Godric \and Ricardo \and Luis\\
     \\
     AI Safety Hackathon 2025\\
     \texttt{github.com/luiscosio/WildGuard}
@@ -67,7 +67,7 @@
 \maketitle
 
 \begin{abstract}
-We present DarkPatternMonitor, a scalable oversight system for detecting manipulative behaviors (``dark patterns'') in large language model (LLM) conversations. Using a taxonomy aligned with DarkBench, we analyze 1,299 real assistant turns from WildChat and find that \textbf{29.4\% exhibit manipulation markers}. Our system combines LLM-as-judge labeling with a lightweight classifier (78\% macro F1) to enable monitoring at scale. We compare benchmark predictions against real-world behavior, finding low distributional divergence (JS = 0.08) but notable category-level gaps. Our findings suggest that manipulation patterns in LLMs are more prevalent than benchmark tests indicate, particularly for harmful generation (12.8\% in the wild vs. 16.7\% in benchmarks).
+We present DarkPatternMonitor, a scalable oversight system for detecting manipulative behaviors (``dark patterns'') in large language model (LLM) conversations. Using a taxonomy aligned with DarkBench, we analyze 280,259 real assistant turns from 100,000 WildChat conversations and find that \textbf{1.3\% exhibit high-confidence manipulation markers}. Our system combines LLM-as-judge labeling with a lightweight classifier (78.7\% accuracy) to enable monitoring at scale. We compare benchmark predictions against real-world behavior, finding that while overall prevalence is low, patterns escalate in longer conversations (sycophancy +42\% from turn 1-5 to turn 20+). Topic analysis reveals character interaction contexts show 5x higher manipulation rates. Our findings suggest that monitoring should prioritize long conversations and roleplay contexts.
 \end{abstract}
 
 \section{Introduction}
@@ -88,8 +88,9 @@ DarkBench \citep{darkbench2025} provides 660 prompts to elicit such behaviors in
 \textbf{Our contributions:}
 \begin{enumerate}
     \item A monitoring pipeline that classifies assistant turns into 6 dark pattern categories
-    \item Analysis of 1,299 real WildChat conversations (29.4\% flagged)
-    \item Benchmark-to-reality gap analysis comparing DarkBench predictions to WildChat observations
+    \item Analysis of 280,259 real WildChat turns from 100,000 conversations (1.3\% flagged)
+    \item Escalation analysis showing dark patterns increase in longer conversations (sycophancy +42\%)
+    \item Topic analysis revealing 5x higher manipulation rates in character interaction contexts
     \item An open-source tool and Streamlit dashboard for ongoing monitoring
 \end{enumerate}
 
@@ -108,7 +109,7 @@ Using LLMs to evaluate other LLM outputs has become standard practice \citep{zhe
 
 \subsection{Data Sources}
 
-\textbf{WildChat:} We extracted 1,299 assistant turns from the WildChat-1M dataset \citep{wildchat2024}, sampling conversations from both GPT-3.5-turbo and GPT-4.
+\textbf{WildChat:} We extracted 280,259 assistant turns from 100,000 conversations in the WildChat-1M dataset \citep{wildchat2024}, including both GPT-3.5-turbo (72\%) and GPT-4 (28\%).
 
 \textbf{DarkBench:} We used sample prompts from 6 dark pattern categories to establish baseline distributions.
 
@@ -150,30 +151,30 @@ where $M = \frac{1}{2}(P + Q)$, $P$ is DarkBench distribution, $Q$ is WildChat d
 
 \subsection{Prevalence in WildChat}
 
-Table \ref{tab:prevalence} shows dark pattern prevalence across 1,299 WildChat turns.
+Table \ref{tab:prevalence} shows dark pattern prevalence across 280,259 WildChat turns.
 
 \begin{table}[H]
 \centering
-\caption{Dark Pattern Prevalence in WildChat (N=1,299)}
+\caption{Dark Pattern Prevalence in WildChat (N=280,259)}
 \label{tab:prevalence}
 \begin{tabular}{lrrr}
 \toprule
 Category & Count & Rate (\%) & Per 1,000 \\
 \midrule
-harmful\_generation & 166 & 12.8 & 127.8 \\
-brand\_bias & 86 & 6.6 & 66.2 \\
-anthropomorphism & 68 & 5.2 & 52.3 \\
-sycophancy & 29 & 2.2 & 22.3 \\
-user\_retention & 23 & 1.8 & 17.7 \\
-sneaking & 10 & 0.8 & 7.7 \\
+anthropomorphism & 1,860 & 0.66 & 6.6 \\
+harmful\_generation & 1,028 & 0.37 & 3.7 \\
+brand\_bias & 405 & 0.14 & 1.4 \\
+sneaking & 333 & 0.12 & 1.2 \\
+user\_retention & 53 & 0.02 & 0.2 \\
+sycophancy & 47 & 0.02 & 0.2 \\
 \midrule
-\textbf{Total Flagged} & \textbf{382} & \textbf{29.4} & \textbf{294.1} \\
-Clean (none) & 917 & 70.6 & 705.9 \\
+\textbf{Total Flagged} & \textbf{3,726} & \textbf{1.3} & \textbf{13.3} \\
+Clean (none) & 276,533 & 98.7 & 986.7 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Key finding:} Nearly 1 in 3 assistant responses (29.4\%) shows at least one manipulation marker.
+\textbf{Key finding:} 1.3\% of assistant responses show high-confidence manipulation markers. While this rate is low, at scale it represents thousands of potentially manipulative interactions daily.
 
 \begin{figure}[H]
 \centering
@@ -196,8 +197,8 @@ Metric & Value \\
 \midrule
 JS Divergence & 0.083 \\
 KL Divergence & 0.326 \\
-DarkBench samples & 18 \\
-WildChat samples & 1,299 \\
+DarkBench samples & 630 \\
+WildChat samples & 280,259 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -301,15 +302,22 @@ All components support resumable execution for long-running operations.
 
 \section{Conclusion}
 
-WildGuard demonstrates that dark patterns in LLM conversations are more prevalent than benchmark tests might suggest. Our analysis of 1,299 WildChat turns found 29.4\% exhibiting manipulation markers, with harmful\_generation (12.8\%) and brand\_bias (6.6\%) most common.
+DarkPatternMonitor demonstrates that while dark patterns in LLM conversations are rare (1.3\% flag rate), they are measurable at scale and show concerning patterns. Our analysis of 280,259 WildChat turns found that:
 
-The system achieves 78\% macro F1 on a 7-class problem, enabling practical monitoring at scale. Our gap analysis validates DarkBench as a reasonable proxy for real-world behavior (JS divergence = 0.083), while highlighting category-level discrepancies.
+\begin{itemize}
+    \item Anthropomorphism (0.66\%) is the most common pattern, followed by harmful generation (0.37\%)
+    \item Sycophancy escalates +42\% in longer conversations as AI builds rapport
+    \item Character interaction contexts show 5x higher manipulation rates
+    \item GPT-4 shows higher flag rates (2.3\%) than GPT-3.5 (1.6\%)
+\end{itemize}
+
+The system achieves 78.7\% accuracy with well-calibrated confidence scores (ECE=0.057), enabling practical monitoring at scale.
 
 Future work should:
 \begin{itemize}
-    \item Expand to multi-turn pattern detection
-    \item Include additional LLM providers beyond ChatGPT
-    \item Develop adversarial robustness against manipulation of the detector itself
+    \item Develop intervention-at-inference to reduce manipulation in real-time
+    \item Expand to additional LLM providers (Claude, Gemini)
+    \item Study the causal relationship between dark patterns and user engagement
 \end{itemize}
 
 \section*{Code Availability}

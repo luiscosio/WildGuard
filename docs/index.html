@@ -913,6 +913,261 @@
                 display: none;
             }
         }
+
+        /* ===== MOBILE - SINGLE PAGE VIEW ===== */
+        @media (max-width: 768px) {
+            .scene {
+                perspective: none;
+            }
+
+            .book-wrapper {
+                width: 95vw;
+                max-width: 500px;
+                height: 85vh;
+                max-height: none;
+            }
+
+            .book {
+                transform: none !important;
+                transform-style: flat;
+            }
+
+            /* Hide book spine shadow on mobile */
+            .book::before {
+                display: none !important;
+            }
+
+            .book:hover {
+                transform: none !important;
+            }
+
+            /* Hide left page display on mobile - show only right page */
+            .left-page-display {
+                display: none !important;
+            }
+
+            /* Cover takes full width on mobile */
+            .cover-left {
+                width: 100% !important;
+                border-radius: 12px !important;
+                left: 0 !important;
+                justify-content: center !important;
+            }
+
+            .cover-left h1 {
+                font-size: 1.8rem !important;
+            }
+
+            .cover-left .subtitle {
+                font-size: 0.9rem !important;
+            }
+
+            .cover-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .cover-stat {
+                padding: 8px 15px;
+            }
+
+            .cover-stat-value {
+                font-size: 1.5rem !important;
+            }
+
+            /* Pages take full width on mobile */
+            .pages-container {
+                width: 100% !important;
+                left: 0 !important;
+            }
+
+            .page {
+                width: 100% !important;
+                transform-origin: center center !important;
+            }
+
+            .page.flipped {
+                transform: translateX(-100%) !important;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .page-face {
+                border-radius: 12px !important;
+                padding: 20px !important;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+                /* Center content vertically on mobile */
+                justify-content: center !important;
+            }
+
+            /* Remove ALL inset shadows that simulate page binding */
+            .page-front,
+            .page-back,
+            .cover-left,
+            .left-page-display,
+            .back-cover {
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+            }
+
+            /* Remove the page edge effect (vertical line) */
+            .page-front::before,
+            .page-back::before {
+                display: none !important;
+            }
+
+            /* Hide page back on mobile - only show front */
+            .page-back {
+                display: none !important;
+            }
+
+            /* Center page content vertically */
+            .page-content {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                flex: 1;
+            }
+
+            /* Back cover full width and centered */
+            .back-cover {
+                width: 100% !important;
+                border-radius: 12px !important;
+                left: 0 !important;
+                padding: 30px 20px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+            }
+
+            .back-cover h2 {
+                font-size: 1.5rem !important;
+            }
+
+            /* Smaller text on mobile */
+            .page-title {
+                font-size: 1.3rem !important;
+            }
+
+            .page-content {
+                font-size: 0.85rem !important;
+            }
+
+            .page-content p {
+                margin-bottom: 0.8rem !important;
+            }
+
+            /* Smaller hero stat */
+            .hero-stat-value {
+                font-size: 2.5rem !important;
+            }
+
+            /* Smaller info cards */
+            .info-card {
+                padding: 12px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .info-card h4 {
+                font-size: 0.9rem !important;
+            }
+
+            /* Smaller charts */
+            .chart-bar {
+                margin-bottom: 8px !important;
+            }
+
+            .chart-label {
+                font-size: 0.7rem !important;
+                min-width: 70px !important;
+            }
+
+            .chart-value {
+                font-size: 0.7rem !important;
+            }
+
+            /* Insight list mobile */
+            .insight-item {
+                padding: 10px !important;
+            }
+
+            .insight-item h5 {
+                font-size: 0.85rem !important;
+            }
+
+            .insight-item p {
+                font-size: 0.75rem !important;
+            }
+
+            /* Warning box mobile */
+            .warning-box {
+                padding: 12px !important;
+            }
+
+            .warning-box h4 {
+                font-size: 0.9rem !important;
+            }
+
+            /* Code box mobile */
+            .code-box {
+                font-size: 0.7rem !important;
+                padding: 12px !important;
+            }
+
+            /* Category grid 2 columns on mobile */
+            .category-grid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+            }
+
+            .category-card {
+                padding: 8px !important;
+            }
+
+            .category-card .emoji {
+                font-size: 1.2rem !important;
+            }
+
+            .category-card h5 {
+                font-size: 0.7rem !important;
+            }
+
+            /* Navigation bigger touch targets */
+            .nav-container {
+                padding: 15px 20px !important;
+            }
+
+            .nav-btn {
+                width: 50px !important;
+                height: 50px !important;
+                font-size: 1.5rem !important;
+            }
+
+            .page-dot {
+                width: 10px !important;
+                height: 10px !important;
+            }
+
+            /* Metric boxes mobile */
+            .metric-row {
+                flex-direction: column;
+                gap: 10px !important;
+            }
+
+            .metric-box {
+                padding: 12px !important;
+            }
+
+            .metric-box-value {
+                font-size: 1.5rem !important;
+            }
+
+            /* CTA button mobile */
+            .cta-button {
+                padding: 12px 20px !important;
+                font-size: 0.9rem !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -940,15 +1195,15 @@
                     <p class="subtitle">Detecting and measuring manipulative<br>AI behaviors in the wild.</p>
                     <div class="cover-stats">
                         <div class="cover-stat">
-                            <div class="cover-stat-value">1.3K</div>
+                            <div class="cover-stat-value">280K</div>
                             <div class="cover-stat-label">Turns Analyzed</div>
                         </div>
                         <div class="cover-stat">
-                            <div class="cover-stat-value">29.4%</div>
+                            <div class="cover-stat-value">1.3%</div>
                             <div class="cover-stat-label">Flag Rate</div>
                         </div>
                         <div class="cover-stat">
-                            <div class="cover-stat-value">78%</div>
+                            <div class="cover-stat-value">78.7%</div>
                             <div class="cover-stat-label">Accuracy</div>
                         </div>
                     </div>
@@ -966,7 +1221,7 @@
                 <div class="back-cover" id="backCover">
                     <h2>🎉 Thank You!</h2>
                     <p style="font-size: 1.1rem;">Built for AI Safety Hackathon 2025</p>
-                    <p style="margin-top: 0.5rem; font-size: 1rem;"><strong>Team DarkPatternMonitor</strong><br>Ricardo Martínez · Godric Aceves</p>
+                    <p style="margin-top: 0.5rem; font-size: 1rem;"><strong>Team DarkPatternMonitor</strong><br>Fernando · Godric · Ricardo · Luis</p>
                     <div class="back-links" style="margin-top: 1.5rem;">
                         <a href="https://github.com/luiscosio/WildGuard" target="_blank" class="back-link" onclick="event.stopPropagation()">📂 GitHub</a>
                         <a href="https://arxiv.org/abs/2503.10728" target="_blank" class="back-link" onclick="event.stopPropagation()">📄 DarkBench Paper</a>
@@ -991,11 +1246,11 @@
                                 <p>Millions of people talk to AI assistants every day. But are these conversations always in the user's best interest?</p>
                                 
                                 <div class="hero-stat">
-                                    <div class="hero-stat-value">29.4%</div>
+                                    <div class="hero-stat-value">1.3%</div>
                                     <div class="hero-stat-label">of AI responses show manipulation markers</div>
                                 </div>
 
-                                <p>We analyzed <strong>1,299 real conversations</strong> from ChatGPT users to find out how often AI assistants exhibit "dark patterns" — subtle manipulation techniques.</p>
+                                <p>We analyzed <strong>280,259 real assistant turns</strong> from 100,000 ChatGPT conversations to find out how often AI assistants exhibit "dark patterns" — subtle manipulation techniques.</p>
                             </div>
                         </div>
                         <div class="page-face page-back">
@@ -1006,7 +1261,7 @@
                             <div class="page-content">
                                 <div class="info-card">
                                     <h4><span class="info-card-icon">📚</span> WildChat Dataset</h4>
-                                    <p>1 million real ChatGPT conversations collected with user consent. We sampled 1,299 assistant turns for analysis.</p>
+                                    <p>1 million real ChatGPT conversations collected with user consent. We analyzed 280,259 assistant turns from 100K conversations.</p>
                                 </div>
                                 <div class="info-card">
                                     <h4><span class="info-card-icon">🎯</span> DarkBench Benchmark</h4>
@@ -1154,53 +1409,53 @@
                                 <div class="page-number">7</div>
                             </div>
                             <div class="page-content">
-                                <p>Breakdown by category (N=1,299 turns):</p>
+                                <p>Breakdown by category (N=280,259 turns):</p>
                                 <div class="chart-container">
+                                    <div class="chart-bar">
+                                        <span class="chart-label">anthropo</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 70%; --fill-color: #8b5cf6; --fill-color-light: #a78bfa;">
+                                                <span class="chart-value">0.66%</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="chart-bar">
                                         <span class="chart-label">harmful_gen</span>
                                         <div class="chart-track">
-                                            <div class="chart-fill" style="width: 65%; --fill-color: #ef4444; --fill-color-light: #f87171;">
-                                                <span class="chart-value">12.8%</span>
+                                            <div class="chart-fill" style="width: 50%; --fill-color: #ef4444; --fill-color-light: #f87171;">
+                                                <span class="chart-value">0.37%</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="chart-bar">
                                         <span class="chart-label">brand_bias</span>
                                         <div class="chart-track">
-                                            <div class="chart-fill" style="width: 35%; --fill-color: #3b82f6; --fill-color-light: #60a5fa;">
-                                                <span class="chart-value">6.6%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <span class="chart-label">anthropo</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 27%; --fill-color: #8b5cf6; --fill-color-light: #a78bfa;">
-                                                <span class="chart-value">5.2%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <span class="chart-label">sycophancy</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 13%; --fill-color: #10b981; --fill-color-light: #34d399;">
-                                                <span class="chart-value">2.2%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <span class="chart-label">retention</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 11%; --fill-color: #f59e0b; --fill-color-light: #fbbf24;">
-                                                <span class="chart-value">1.8%</span>
+                                            <div class="chart-fill" style="width: 25%; --fill-color: #3b82f6; --fill-color-light: #60a5fa;">
+                                                <span class="chart-value">0.14%</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="chart-bar">
                                         <span class="chart-label">sneaking</span>
                                         <div class="chart-track">
-                                            <div class="chart-fill" style="width: 10%; --fill-color: #ec4899; --fill-color-light: #f472b6;">
-                                                <span class="chart-value">0.8%</span>
+                                            <div class="chart-fill" style="width: 20%; --fill-color: #ec4899; --fill-color-light: #f472b6;">
+                                                <span class="chart-value">0.12%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <span class="chart-label">retention</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 10%; --fill-color: #f59e0b; --fill-color-light: #fbbf24;">
+                                                <span class="chart-value">0.02%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <span class="chart-label">sycophancy</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 10%; --fill-color: #10b981; --fill-color-light: #34d399;">
+                                                <span class="chart-value">0.02%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1246,22 +1501,22 @@
                                     <div class="insight-item">
                                         <span class="emoji">🔍</span>
                                         <div>
-                                            <h5>Patterns Are Common</h5>
-                                            <p>29.4% flagged is not negligible. Nearly 1 in 3 responses showed manipulation markers.</p>
+                                            <h5>Patterns Are Rare but Real</h5>
+                                            <p>1.3% of 280K turns flagged (~3,600 cases). Low rate, but measurable at scale.</p>
                                         </div>
                                     </div>
                                     <div class="insight-item">
                                         <span class="emoji">⚠️</span>
                                         <div>
-                                            <h5>Harmful Content Leads</h5>
-                                            <p>At 12.8%, harmful_generation is the most common pattern detected.</p>
+                                            <h5>Anthropomorphism Leads</h5>
+                                            <p>AI claiming human emotions (0.66%) is the most common pattern, followed by harmful content (0.37%).</p>
                                         </div>
                                     </div>
                                     <div class="insight-item">
                                         <span class="emoji">📈</span>
                                         <div>
                                             <h5>Escalation Over Time</h5>
-                                            <p>Flag rates increase in longer conversations, from ~20% at turn 10 to 50%+ at turn 30.</p>
+                                            <p>Sycophancy increases +42% in longer conversations. Dark patterns grow as rapport builds.</p>
                                         </div>
                                     </div>
                                 </div>

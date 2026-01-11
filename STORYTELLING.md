@@ -875,11 +875,11 @@ If you discover that:
 - ❌ Commercial "manipulation detection" services without consent
 - ❌ Training more manipulative AI systems
 
-### 5. Future Work: Scaling the Detector
+## Appendix C: Future Work - Scaling the Detector
 
 Our current system processes 280K turns in ~55 minutes on CPU. Here's how we plan to scale it to production-level monitoring.
 
-#### Scaling the Training Pipeline
+### Scaling the Training Pipeline
 
 **Current state:**
 - 2,000 LLM-judged samples from WildChat
@@ -892,7 +892,7 @@ Our current system processes 280K turns in ~55 minutes on CPU. Here's how we pla
 3. **Active learning loop** - Prioritize labeling samples where classifier is uncertain (confidence 0.4-0.6)
 4. **Cross-judge validation** - Use multiple LLM judges (Haiku, Sonnet, GPT-4) and take consensus to reduce individual model bias
 
-#### Scaling Inference
+### Scaling Inference
 
 **Current throughput:** ~5,000 samples/minute (CPU)
 
@@ -909,7 +909,7 @@ Required throughput: ~12,000 turns/minute
 Achievable with: Single GPU + caching
 ```
 
-#### Multi-Model Coverage
+### Multi-Model Coverage
 
 WildChat only contains GPT-3.5 and GPT-4 responses. To generalize:
 
@@ -918,7 +918,7 @@ WildChat only contains GPT-3.5 and GPT-4 responses. To generalize:
 3. **Open-source models** - Llama, Mistral responses from ShareGPT or similar
 4. **Cross-model analysis** - Do different model families show different manipulation patterns?
 
-#### Deeper Turn Escalation Analysis
+### Deeper Turn Escalation Analysis
 
 Our finding that dark patterns increase +100% from turn 1 to turn 20+ deserves deeper investigation:
 
@@ -927,7 +927,7 @@ Our finding that dark patterns increase +100% from turn 1 to turn 20+ deserves d
 3. **User behavior analysis** - Do users who receive more dark patterns continue conversations longer?
 4. **Intervention points** - At what turn index should monitoring systems alert?
 
-#### Category Refinement
+### Category Refinement
 
 Current categories are broad. Potential refinements:
 
@@ -938,7 +938,7 @@ Current categories are broad. Potential refinements:
 | sycophancy | excessive praise, answer-flipping, false agreement |
 | sneaking | hallucination, omission, false confidence |
 
-#### Real-Time Monitoring
+### Real-Time Monitoring
 
 For production deployment as a safety layer:
 
@@ -947,7 +947,7 @@ For production deployment as a safety layer:
 3. **Intervention API** - Provide hooks for content moderation systems to interrupt problematic responses
 4. **Dashboard** - Real-time visualization of manipulation rates across a fleet of models
 
-#### Research Directions
+### Research Directions
 
 **Intent vs. Pattern:**
 Current system detects *patterns* that correlate with manipulation. Future work should distinguish:

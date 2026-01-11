@@ -1,0 +1,11 @@
+\section{System Architecture}
+DarkPatternMonitor is organized as a modular pipeline with well-separated stages for data ingestion, labeling, modeling, inference, and reporting. Figure~\ref{fig:architecture} depicts the end-to-end architecture used in the repository.
+
+Key architectural properties include: (i) streaming ingestion with checkpointing for large datasets, (ii) parallel LLM calls for judge labeling and elicitation, (iii) a fast embedding classifier for batch inference, and (iv) analytics modules that reuse shared JSONL outputs. A lightweight Streamlit app provides interactive access to detections and reports without coupling to the core pipeline.
+
+\begin{figure}[t]
+  \centering
+  \input{figures/fig_architecture.tex}
+  \caption{System architecture showing data sources, labeling, model training, inference, reporting, and the UI layer.}
+  \label{fig:architecture}
+\end{figure}

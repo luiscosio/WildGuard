@@ -900,7 +900,7 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 | File | Description | Download |
 |------|-------------|----------|
 | **Models** | Pre-trained dark pattern classifier | [darkpatternmonitor_models.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_models.zip) |
-| **Data** | Detection results and analytics (V5) | [darkpatternmonitor_data.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_data.zip) |
+| **Data** | Detection results and analytics | [darkpatternmonitor_data.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_data.zip) |
 | **Training** | Labeled training data (2,448 samples) | [darkpatternmonitor_training.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_training.zip) |
 
 ### HuggingFace Datasets

@@ -1,0 +1,6 @@
+\section{Related Work}
+DarkPatternMonitor sits at the intersection of dark-pattern measurement, LLM behavior auditing, and large-scale log analysis. Prior work on dark patterns in interface design motivates the taxonomy and risk framing but does not directly address model-generated manipulation in conversational systems. DarkBench provides a targeted elicitation benchmark for dark pattern categories in LLM outputs and is a primary source of labeled examples in this project \citep{darkbench2025}.
+
+On the real-world side, WildChat offers opt-in chat logs from GPT-3.5 and GPT-4 users, enabling empirical measurement of behavior prevalence in deployed systems \citep{wildchat2024}. This dataset supports the ``benchmark vs reality'' analysis that DarkPatternMonitor operationalizes through gap reports and distributional comparisons.
+
+Finally, LLM-as-judge approaches have emerged as a practical alternative to manual labeling at scale. DarkPatternMonitor uses an LLM judge for weak supervision and reliability testing, aligning with recent studies on judge consistency and calibration \citep{llmjudge2024}. The system complements these efforts by explicitly measuring judge-classifier agreement and by mining disagreement cases to refine training data.

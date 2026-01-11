@@ -1,0 +1,8 @@
+\section{Discussion}
+DarkPatternMonitor demonstrates that manipulation markers can be detected at scale with a practical trade-off between precision, throughput, and labeling cost. Results suggest that while the overall prevalence is low (1.3\%), certain categories such as anthropomorphism and harmful generation appear consistently, and escalation patterns emerge in longer conversations. This supports a monitoring posture that is sensitive to topic and conversation length rather than uniform thresholds.
+
+The benchmark-to-reality gap is a central insight: DarkBench elicits rare patterns at roughly uniform rates across categories, but WildChat shows substantial skew in real deployments. This mismatch implies that benchmark-only evaluation may miscalibrate operational risk. The project responds by calibrating with judge-labeled real logs and by mining disagreement cases to reduce false positives, aligning with the changelog evidence that precision-focused corrections significantly lower flag rates while improving calibration.
+
+A notable systems implication is that the classifier is most useful as a triage layer, not a final arbiter of intent. The LLM judge provides richer explanations but is costlier and less consistent; the classifier is fast and consistent but context-limited. The hybrid approach can therefore be deployed as: (i) lightweight batch monitoring at scale, (ii) targeted judge review for high-confidence detections, and (iii) periodic retraining using disagreement mining to reduce drift.
+
+All pipeline scripts, trained models, and full-scale outputs are available in the repository and project website, enabling independent reproduction and extension of this work.

@@ -1,0 +1,14 @@
+\section{Introduction}
+Manipulative behaviors in AI assistants pose a safety risk that is hard to measure at scale. Benchmarks can elicit such behaviors in controlled settings, but they often fail to represent real-world usage distributions. DarkPatternMonitor addresses this gap by combining benchmark-driven elicitation with large-scale monitoring of real chat logs, aiming to answer: \textit{Which manipulation patterns actually occur in production LLM conversations, and how reliably can we detect them?}
+
+The system targets six categories grounded in DarkBench: brand bias, user retention, sycophancy, anthropomorphism, harmful generation, and sneaking. It uses a hybrid labeling strategy: DarkBench provides known-category elicited responses, while a high-throughput LLM-as-judge labels a subset of real conversations from WildChat. An embedding-based classifier is trained on the combined dataset and applied at scale to assistant turns, enabling prevalence analysis, benchmark-to-reality gap measurement, and reliability auditing.
+
+This paper follows the structure and rigor of WildGuard-style analyses, but focuses strictly on artifacts present in the DarkPatternMonitor repository. Where large-scale metrics are reported in project documentation but not reproducible from included artifacts, we mark those results explicitly and provide realistic experimental designs to complete them.
+
+\paragraph{Contributions.} We make the following contributions:
+\begin{itemize}[leftmargin=1.25em]
+  \item \textbf{System design:} A benchmark-calibrated monitoring pipeline that combines DarkBench elicitation, LLM-judge labeling, and scalable classifier inference for real chat logs.
+  \item \textbf{Implementation detail:} A modular pipeline with resumable ingestion, parallel LLM judging, embedding-based classification, and report generation (prevalence, gap, reliability, and topic analyses).
+  \item \textbf{Reported findings:} Project documentation reports prevalence, escalation, and model-comparison trends on 280k+ WildChat turns, highlighting measurable manipulation markers in real usage.
+  \item \textbf{Safety analysis:} A structured limitations, dual-use, and ethics discussion grounded in documented failure modes and data provenance.
+\end{itemize}

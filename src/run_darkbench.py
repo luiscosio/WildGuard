@@ -3,6 +3,7 @@
 import argparse
 from pathlib import Path
 from typing import Any
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 import openai
 import anthropic
@@ -177,21 +178,25 @@ def run_darkbench_elicitation(
     config: LLMConfig,
     output_path: Path | None = None,
     resume: bool = True,
+    parallel: int = 10,
 ) -> list[dict[str, Any]]:
     """
     Run DarkBench prompts through a model and collect outputs.
-    Supports resuming from previous runs.
+    Supports resuming from previous runs and parallel processing.
 
     Args:
         prompts: List of prompt dictionaries with 'id', 'prompt', 'category'
         config: LLM configuration
         output_path: Path to save results
         resume: Whether to resume from existing progress
+        parallel: Number of parallel API calls (default: 10)
 
     Returns:
         List of results with model outputs
     """
+    import threading
     output_path = output_path or (OUTPUTS_DIR / "darkbench_outputs.jsonl")
+    write_lock = threading.Lock()
 
     # Check for existing results to resume
     processed_ids: set[str] = set()
@@ -209,12 +214,12 @@ def run_darkbench_elicitation(
         logger.info("All prompts already processed!")
         return results
 
-    logger.info(f"Processing {len(remaining_prompts)} remaining prompts...")
+    logger.info(f"Processing {len(remaining_prompts)} remaining prompts with {parallel} parallel workers...")
 
-    for prompt_data in tqdm(remaining_prompts, desc="Running DarkBench prompts"):
+    def process_prompt(prompt_data: dict[str, Any]) -> dict[str, Any]:
+        """Process a single prompt and return result."""
         output = run_prompt(prompt_data["prompt"], config)
-
-        result = {
+        return {
             "id": prompt_data["id"],
             "prompt": prompt_data["prompt"],
             "category": prompt_data["category"],
@@ -223,10 +228,20 @@ def run_darkbench_elicitation(
             "output": output,
             "temperature": config.temperature,
         }
-        results.append(result)
 
-        # Append to file immediately for resume capability
-        append_jsonl(result, output_path)
+    with ThreadPoolExecutor(max_workers=parallel) as executor:
+        futures = {executor.submit(process_prompt, p): p for p in remaining_prompts}
+
+        with tqdm(total=len(remaining_prompts), desc="Running DarkBench prompts") as pbar:
+            for future in as_completed(futures):
+                result = future.result()
+                results.append(result)
+
+                # Thread-safe append to file
+                with write_lock:
+                    append_jsonl(result, output_path)
+
+                pbar.update(1)
 
     logger.info(f"Completed {len(results)} DarkBench outputs to {output_path}")
     return results
@@ -258,7 +273,7 @@ def main():
         "--model",
         type=str,
         default=None,
-        help="Model name (default: from OPENROUTER_MODEL env var or anthropic/claude-3.5-sonnet)",
+        help="Model name (default: from OPENROUTER_MODEL env var or anthropic/claude-haiku-4.5)",
     )
     parser.add_argument(
         "--temperature",
@@ -291,6 +306,12 @@ def main():
         "--clear-cache",
         action="store_true",
         help="Clear existing output file before starting",
+    )
+    parser.add_argument(
+        "--parallel",
+        type=int,
+        default=10,
+        help="Number of parallel API calls (default: 10)",
     )
     args = parser.parse_args()
 
@@ -357,12 +378,13 @@ def main():
         output_path.unlink()
         logger.info(f"Cleared existing output file: {output_path}")
 
-    # Run elicitation with resume support
+    # Run elicitation with resume support and parallel processing
     run_darkbench_elicitation(
         prompts=prompts,
         config=config,
         output_path=output_path,
         resume=not args.no_resume,
+        parallel=args.parallel,
     )
 
 

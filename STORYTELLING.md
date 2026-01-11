@@ -875,22 +875,95 @@ If you discover that:
 - ❌ Commercial "manipulation detection" services without consent
 - ❌ Training more manipulative AI systems
 
-### 5. Future Improvements
+### 5. Future Work: Scaling the Detector
 
-#### Short-term:
-1. **Multi-model coverage:** Extend to Claude, Gemini, Llama, and other popular models.
-2. **Larger validation set:** Increase human-validated samples for stronger statistical claims.
-3. **Streaming detection:** Enable real-time detection during conversations.
+Our current system processes 280K turns in ~55 minutes on CPU. Here's how we plan to scale it to production-level monitoring.
 
-#### Medium-term:
-1. **Multilingual expansion:** Train on translated and native non-English data.
-2. **Category refinement:** Split overly broad categories (e.g., harmful_generation into subtypes).
-3. **User study validation:** Verify that detected patterns actually influence user behavior.
+#### Scaling the Training Pipeline
 
-#### Long-term (research directions):
-1. **Intent detection:** Move from pattern detection to understanding manipulative intent.
-2. **Countermeasure development:** Tools that help AI systems avoid dark patterns.
-3. **Policy integration:** Inform regulatory frameworks for AI transparency.
+**Current state:**
+- 2,000 LLM-judged samples from WildChat
+- 630 elicited samples from DarkBench
+- 150 human-validated samples for calibration
+
+**Next steps:**
+1. **Scale judge labeling to 10,000+ samples** - More training data improves rare category detection (user_retention has only 3 samples in current judge labels)
+2. **Scale validation to 500+ samples** - Current 150 samples give wide confidence intervals; 500+ enables per-category statistical significance
+3. **Active learning loop** - Prioritize labeling samples where classifier is uncertain (confidence 0.4-0.6)
+4. **Cross-judge validation** - Use multiple LLM judges (Haiku, Sonnet, GPT-4) and take consensus to reduce individual model bias
+
+#### Scaling Inference
+
+**Current throughput:** ~5,000 samples/minute (CPU)
+
+**Optimization paths:**
+1. **GPU acceleration** - RTX 4090 would give 10-20x speedup for embedding generation
+2. **Batch API calls** - Process 1M+ turns with async batching
+3. **Caching embeddings** - Store embeddings for repeated analysis; embedding is 95% of inference time
+4. **Model distillation** - Train smaller classifier head on top of cached embeddings
+
+**Production deployment:**
+```
+Target: 1M conversations/day monitoring
+Required throughput: ~12,000 turns/minute
+Achievable with: Single GPU + caching
+```
+
+#### Multi-Model Coverage
+
+WildChat only contains GPT-3.5 and GPT-4 responses. To generalize:
+
+1. **Claude conversations** - Anthropic's public datasets or synthetic generation
+2. **Gemini conversations** - Google's public datasets
+3. **Open-source models** - Llama, Mistral responses from ShareGPT or similar
+4. **Cross-model analysis** - Do different model families show different manipulation patterns?
+
+#### Deeper Turn Escalation Analysis
+
+Our finding that dark patterns increase +100% from turn 1 to turn 20+ deserves deeper investigation:
+
+1. **Per-category escalation** - Which patterns escalate most? (Hypothesis: anthropomorphism and sycophancy escalate more than brand_bias)
+2. **Conversation topic correlation** - Do certain topics (emotional support, creative writing) show steeper escalation?
+3. **User behavior analysis** - Do users who receive more dark patterns continue conversations longer?
+4. **Intervention points** - At what turn index should monitoring systems alert?
+
+#### Category Refinement
+
+Current categories are broad. Potential refinements:
+
+| Current | Potential Subcategories |
+|---------|------------------------|
+| harmful_generation | explicit content, violence, illegal advice, self-harm |
+| anthropomorphism | emotional claims, physical claims, memory claims, relationship claims |
+| sycophancy | excessive praise, answer-flipping, false agreement |
+| sneaking | hallucination, omission, false confidence |
+
+#### Real-Time Monitoring
+
+For production deployment as a safety layer:
+
+1. **Streaming detection** - Analyze responses token-by-token as they're generated
+2. **Early warning** - Flag conversations trending toward manipulation before they escalate
+3. **Intervention API** - Provide hooks for content moderation systems to interrupt problematic responses
+4. **Dashboard** - Real-time visualization of manipulation rates across a fleet of models
+
+#### Research Directions
+
+**Intent vs. Pattern:**
+Current system detects *patterns* that correlate with manipulation. Future work should distinguish:
+- Intentional manipulation (model trained to retain users)
+- Emergent behavior (RLHF reward hacking)
+- False positives (benign responses matching manipulation patterns)
+
+**Causal Analysis:**
+- Do detected dark patterns actually influence user behavior?
+- Would users notice/object if manipulation was highlighted?
+- What training interventions reduce dark pattern rates?
+
+**Policy Applications:**
+- Regulatory compliance monitoring (EU AI Act, etc.)
+- Model evaluation benchmarks for safety certification
+- Transparency reporting for AI companies
 
 
 *Built for the AI Manipulation Hackathon 2026 by Apart Research*

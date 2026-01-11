@@ -1,4 +1,4 @@
-# WildGuard: The Story of Detecting Dark Patterns in AI
+# DarkPatternMonitor: The Story of Detecting Dark Patterns in AI
 
 ## Chapter 1: The Question
 
@@ -6,7 +6,7 @@
 
 We set out to answer this question by analyzing 100,000 real conversations between humans and ChatGPT. Not synthetic tests, real conversations from real users.
 
-> **Note:** Highly recommended to see our [website first](https://wildguard.luiscos.io/) and for a detailed history of our experiments and what worked/didn't work, see [CHANGELOG.md](CHANGELOG.md).
+> **Note:** Highly recommended to see our [website first](https://darkpatternmonitor.luiscos.io/) and for a detailed history of our experiments and what worked/didn't work, see [CHANGELOG.md](CHANGELOG.md).
 
 ### Download Pre-trained Models and Data
 
@@ -14,9 +14,9 @@ Skip training and use our pre-trained classifier and detection results:
 
 | File | Description | Download |
 |------|-------------|----------|
-| **Models** | Pre-trained dark pattern classifier | [wildguard_models.zip](https://wildguard.luiscos.io/release/wildguard_models.zip) |
-| **Data** | Detection results and analytics | [wildguard_data.zip](https://wildguard.luiscos.io/release/wildguard_data.zip) |
-| **Training** | Labeled training data | [wildguard_training.zip](https://wildguard.luiscos.io/release/wildguard_training.zip) |
+| **Models** | Pre-trained dark pattern classifier | [darkpatternmonitor_models.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_models.zip) |
+| **Data** | Detection results and analytics | [darkpatternmonitor_data.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_data.zip) |
+| **Training** | Labeled training data | [darkpatternmonitor_training.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_training.zip) |
 
 Extract to `models/`, `outputs/`, and `data/` directories respectively.
 
@@ -850,7 +850,7 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 - AI assistants exhibit measurable manipulation patterns in real conversations
 - More capable models (GPT-4) show significantly more dark patterns than less capable ones
 - Different patterns have different dynamics - sycophancy builds over time, harmful content appears early or not at all
-- Monitoring tools like WildGuard enable systematic oversight at scale with statistical rigor
+- Monitoring tools like DarkPatternMonitor enable systematic oversight at scale with statistical rigor
 - Benchmark (DarkBench) over-represents rare patterns vs real-world distribution
 
 ### Limitations
@@ -865,9 +865,9 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 
 | File | Description | Download |
 |------|-------------|----------|
-| **Models** | Pre-trained dark pattern classifier | [wildguard_models.zip](https://wildguard.luiscos.io/release/wildguard_models.zip) |
-| **Data** | Detection results and analytics (V5) | [wildguard_data.zip](https://wildguard.luiscos.io/release/wildguard_data.zip) |
-| **Training** | Labeled training data (2,448 samples) | [wildguard_training.zip](https://wildguard.luiscos.io/release/wildguard_training.zip) |
+| **Models** | Pre-trained dark pattern classifier | [darkpatternmonitor_models.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_models.zip) |
+| **Data** | Detection results and analytics (V5) | [darkpatternmonitor_data.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_data.zip) |
+| **Training** | Labeled training data (2,448 samples) | [darkpatternmonitor_training.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_training.zip) |
 
 ### HuggingFace Datasets
 - **DarkBench:** https://huggingface.co/datasets/Apart/DarkBench
@@ -950,7 +950,7 @@ If you discover that:
 2. Notify affected AI providers simultaneously.
 3. Coordinate disclosure timing with providers.
 
-**WildGuard itself can be exploited:**
+**DarkPatternMonitor itself can be exploited:**
 1. Report to our team via GitHub Security Advisory.
 2. Do not publish exploits publicly before we respond.
 3. We commit to acknowledging reports within 72 hours.

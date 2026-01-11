@@ -1,4 +1,4 @@
-"""WildGuard Streamlit Demo App - Dark Pattern Monitoring Dashboard."""
+"""DarkPatternMonitor Streamlit Demo App - Dark Pattern Monitoring Dashboard."""
 
 import streamlit as st
 import pandas as pd
@@ -15,7 +15,7 @@ from src.infer_wildchat import DarkPatternClassifier
 
 # Page configuration
 st.set_page_config(
-    page_title="WildGuard - Dark Pattern Monitor",
+    page_title="DarkPatternMonitor - Dark Pattern Monitor",
     page_icon="🛡️",
     layout="wide",
 )
@@ -76,7 +76,7 @@ def load_reports():
 
 def render_sidebar():
     """Render sidebar navigation."""
-    st.sidebar.title("🛡️ WildGuard")
+    st.sidebar.title("🛡️ DarkPatternMonitor")
     st.sidebar.markdown("Dark Pattern Monitoring System")
 
     page = st.sidebar.radio(
@@ -87,7 +87,7 @@ def render_sidebar():
     st.sidebar.markdown("---")
     st.sidebar.markdown("### About")
     st.sidebar.markdown(
-        "WildGuard monitors LLM conversations for dark patterns "
+        "DarkPatternMonitor monitors LLM conversations for dark patterns "
         "using a combination of classifier and LLM judge approaches."
     )
 
@@ -435,7 +435,7 @@ def render_reports_page():
             st.download_button(
                 "Download JSON",
                 reports_json,
-                "wildguard_reports.json",
+                "darkpatternmonitor_reports.json",
                 "application/json",
             )
 

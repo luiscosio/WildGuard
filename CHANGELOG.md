@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to WildGuard are documented here.
+All notable changes to DarkPatternMonitor are documented here.
 
 ## [V5] - 2026-01-11
 

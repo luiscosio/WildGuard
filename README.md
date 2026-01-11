@@ -1,14 +1,14 @@
-# WildGuard
+# DarkPatternMonitor
 
 **Scalable Oversight Harness for Dark-Pattern Monitoring in Real LLM Chat Logs**
 
-WildGuard detects manipulation patterns ("dark patterns") in AI assistant responses at scale. It combines benchmark-driven elicitation with real-world monitoring to answer: *What manipulation behaviors actually occur in production LLM conversations?*
+DarkPatternMonitor detects manipulation patterns ("dark patterns") in AI assistant responses at scale. It combines benchmark-driven elicitation with real-world monitoring to answer: *What manipulation behaviors actually occur in production LLM conversations?*
 
-> **Note:** Highly recommended to see our [website first](https://wildguard.luiscos.io/), then [STORYTELLING.md](STORYTELLING.md) for the full narrative and methodology. See [CHANGELOG.md](CHANGELOG.md) for experiment history.
+> **Note:** Highly recommended to see our [website first](https://darkpatternmonitor.luiscos.io/), then [STORYTELLING.md](STORYTELLING.md) for the full narrative and methodology. See [CHANGELOG.md](CHANGELOG.md) for experiment history.
 
-## What is WildGuard?
+## What is DarkPatternMonitor?
 
-WildGuard is a monitoring system that:
+DarkPatternMonitor is a monitoring system that:
 1. **Detects** dark patterns in LLM responses (brand bias, sycophancy, user retention tactics, etc.)
 2. **Measures** how often these patterns appear in real conversations
 3. **Compares** benchmark predictions vs. real-world behavior
@@ -53,7 +53,7 @@ flowchart TB
 
 ## Dark Pattern Categories
 
-WildGuard detects six types of manipulation patterns (from [DarkBench](https://darkbench.ai/)):
+DarkPatternMonitor detects six types of manipulation patterns (from [DarkBench](https://darkbench.ai/)):
 
 | Category | Description | Example |
 |----------|-------------|---------|
@@ -139,8 +139,8 @@ pip install -r requirements.txt
 
 Skip training and use our pre-trained models and detection results:
 
-- **Models**: [wildguard.luiscos.io/models](https://wildguard.luiscos.io/models) - Pre-trained dark pattern classifier
-- **Data**: [wildguard.luiscos.io/data](https://wildguard.luiscos.io/data) - Detection results, training data, and reports
+- **Models**: [darkpatternmonitor.luiscos.io/models](https://darkpatternmonitor.luiscos.io/models) - Pre-trained dark pattern classifier
+- **Data**: [darkpatternmonitor.luiscos.io/data](https://darkpatternmonitor.luiscos.io/data) - Detection results, training data, and reports
 
 Extract to `models/` and `outputs/` directories respectively.
 
@@ -186,7 +186,7 @@ The app lets you:
 **Option 2: Explore Results**
 
 Explore our analysis results interactively:
-- **Website**: [wildguard.luiscos.io](https://wildguard.luiscos.io) - Interactive visualizations
+- **Website**: [darkpatternmonitor.luiscos.io](https://darkpatternmonitor.luiscos.io) - Interactive visualizations
 - **Notebooks**: `notebooks/` - Jupyter notebooks for exploring detection data
 - **Narrative**: [STORYTELLING.md](STORYTELLING.md) - Full methodology and findings
 

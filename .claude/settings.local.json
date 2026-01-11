@@ -29,7 +29,28 @@
       "Bash(git commit:*)",
       "Bash(git reflog:*)",
       "Bash(git gc:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(py -3.12:*)",
+      "Bash(.venv312Scriptspython.exe -m pip install --upgrade pip)",
+      "Bash(.venv312Scriptspip.exe install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121)",
+      "Bash(\".venv312/Scripts/python.exe\" -m pip install --upgrade pip)",
+      "Bash(\".venv312/Scripts/pip.exe\" install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121)",
+      "Bash(\".venv312/Scripts/python.exe\":*)",
+      "Bash(\".venv312/Scripts/pip.exe\" install -r requirements.txt)",
+      "Bash(test:*)",
+      "Bash(\".venv312/Scripts/python.exe\" -m src.run_darkbench:*)",
+      "Bash(ls:*)",
+      "Bash(turns \")",
+      "Bash(\".venv312/Scripts/python.exe\" -m src.analytics_v4)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(.venv312Scriptsactivate)",
+      "Bash(timeout /t 15 /nobreak)",
+      "Bash(cmd /c \"cd /d D:\\\\Dropbox\\\\Projects\\\\WildGuard && .venv312\\\\Scripts\\\\python.exe -m src.run_darkbench --batch-size 10 --output outputs\\\\darkbench_outputs_haiku.jsonl --resume\")",
+      "Bash(cmd /c \"cd /d D:\\\\Dropbox\\\\Projects\\\\WildGuard && .venv312\\\\Scripts\\\\python.exe -m src.run_darkbench --from-huggingface --parallel 10 --output outputs\\\\darkbench_outputs_haiku.jsonl\")",
+      "Bash(cmd /c \"cd /d D:\\\\Dropbox\\\\Projects\\\\WildGuard && .venv312\\\\Scripts\\\\python.exe -m src.run_darkbench --from-huggingface --parallel 10 --output outputs\\\\darkbench_outputs_haiku.jsonl 2>&1\")",
+      "Bash(\"D:/Dropbox/Projects/WildGuard/.venv312/Scripts/python.exe\" -m src.run_darkbench:*)",
+      "Bash(\"D:/Dropbox/Projects/WildGuard/.venv312/Scripts/python.exe\" -m src.judge_label:*)"
     ]
   }
 }

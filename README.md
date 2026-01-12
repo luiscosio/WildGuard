@@ -225,7 +225,7 @@ Explore our analysis results interactively:
 ## Project Structure
 
 ```
-wildguard/
+DarkPatternMonitor/
 ├── src/
 │   ├── run_darkbench.py      # Run elicitation prompts
 │   ├── ingest_wildchat.py    # Load WildChat data

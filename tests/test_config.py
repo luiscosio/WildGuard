@@ -7,7 +7,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.config import (
-    WildGuardConfig,
+    DarkPatternMonitorConfig,
     LLMConfig,
     JudgeConfig,
     ClassifierConfig,
@@ -57,24 +57,24 @@ class TestLLMConfig:
         assert config.temperature == 0.5
 
 
-class TestWildGuardConfig:
+class TestDarkPatternMonitorConfig:
     """Test main configuration."""
 
     def test_default_config(self):
-        """Test default WildGuard config."""
-        config = WildGuardConfig()
+        """Test default DarkPatternMonitor config."""
+        config = DarkPatternMonitorConfig()
         assert len(config.categories) == 6
         assert config.use_mvp_categories is False
 
     def test_get_active_categories_full(self):
         """Test getting full category list."""
-        config = WildGuardConfig(use_mvp_categories=False)
+        config = DarkPatternMonitorConfig(use_mvp_categories=False)
         categories = config.get_active_categories()
         assert len(categories) == 6
 
     def test_get_active_categories_mvp(self):
         """Test getting MVP categories."""
-        config = WildGuardConfig(use_mvp_categories=True)
+        config = DarkPatternMonitorConfig(use_mvp_categories=True)
         categories = config.get_active_categories()
         assert len(categories) == 3
         assert categories == MVP_CATEGORIES

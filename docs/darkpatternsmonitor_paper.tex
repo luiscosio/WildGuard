@@ -49,7 +49,7 @@
 % - ../figures/confidence_exploration.png (detailed confidence analysis)
 % - ../figures/prevalence_exploration.png (alternative prevalence view)
 %
-% TO COMPILE: pdflatex wildguard_paper.tex (from the paper/ directory)
+% TO COMPILE: pdflatex DarkPatternMonitor_paper.tex (from the paper/ directory)
 %==============================================================================
 
 % No mdash - use hyphens or "to" instead
@@ -58,7 +58,7 @@
     Fernando \and Godric \and Ricardo \and Luis\\
     \\
     Apart Research AI Manipulation Hackathon\\
-    \texttt{github.com/luiscosio/WildGuard}
+    \texttt{github.com/luiscosio/DarkPatternMonitor}
 }
 \date{January 2026}
 
@@ -280,13 +280,13 @@ Figure \ref{fig:reliability} shows the overall reliability analysis of our detec
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/reliability_analysis.png}
-\caption{Reliability analysis of the WildGuard detection system. This metric captures agreement between different detection signals (LLM judge, classifier predictions, confidence thresholds).}
+\caption{Reliability analysis of the DarkPatternMonitor detection system. This metric captures agreement between different detection signals (LLM judge, classifier predictions, confidence thresholds).}
 \label{fig:reliability}
 \end{figure}
 
 \section{System Architecture}
 
-WildGuard consists of:
+DarkPatternMonitor consists of:
 
 \begin{enumerate}
     \item \textbf{Ingestion} (src/ingest\_wildchat.py): Stream WildChat from HuggingFace, extract assistant turns
@@ -323,7 +323,7 @@ Future work should:
 \section*{Code Availability}
 
 All code, data, and models are available at:\\
-\url{https://github.com/luiscosio/WildGuard}
+\url{https://github.com/luiscosio/DarkPatternMonitor}
 
 %==============================================================================
 % APPENDIX: LIMITATIONS AND DUAL-USE CONSIDERATIONS
@@ -377,11 +377,11 @@ The monitoring system could be misused for:
     \item Profiling users based on conversation patterns
 \end{itemize}
 
-\textbf{Mitigation:} WildGuard is designed for aggregate analysis, not individual targeting. We do not retain user identifiers and recommend deployment only with informed consent.
+\textbf{Mitigation:} DarkPatternMonitor is designed for aggregate analysis, not individual targeting. We do not retain user identifiers and recommend deployment only with informed consent.
 
 \subsection{Responsible Disclosure Recommendations}
 
-If vulnerabilities are discovered in commercial LLM systems using WildGuard:
+If vulnerabilities are discovered in commercial LLM systems using DarkPatternMonitor:
 
 \begin{enumerate}
     \item \textbf{Do not publish} specific prompts that reliably elicit harmful content

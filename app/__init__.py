@@ -1,1 +1,1 @@
-"""WildGuard Streamlit application."""
+"""DarkPatternMonitor Streamlit application."""

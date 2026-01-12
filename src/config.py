@@ -1,4 +1,4 @@
-"""Configuration settings for WildGuard."""
+"""Configuration settings for DarkPatternMonitor."""
 
 from pathlib import Path
 from typing import Literal
@@ -109,8 +109,8 @@ class MonitorConfig(BaseModel):
     random_qa_sample: int = 200  # Random sample for QA
 
 
-class WildGuardConfig(BaseModel):
-    """Main configuration for WildGuard system."""
+class DarkPatternMonitorConfig(BaseModel):
+    """Main configuration for DarkPatternMonitor system."""
 
     judge: JudgeConfig = Field(default_factory=JudgeConfig)
     classifier: ClassifierConfig = Field(default_factory=ClassifierConfig)
@@ -126,4 +126,4 @@ class WildGuardConfig(BaseModel):
 
 
 # Default configuration
-default_config = WildGuardConfig()
+default_config = DarkPatternMonitorConfig()

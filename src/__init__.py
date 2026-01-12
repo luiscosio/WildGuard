@@ -1,3 +1,3 @@
-"""WildGuard - Scalable Oversight Harness for Dark-Pattern Monitoring."""
+"""DarkPatternMonitor - Scalable Oversight Harness for Dark-Pattern Monitoring."""
 
 __version__ = "0.1.0"

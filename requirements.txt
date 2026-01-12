@@ -1,4 +1,4 @@
-# WildGuard - Dark Pattern Monitoring System
+# DarkPatternMonitor - Dark Pattern Monitoring System
 # Core dependencies
 
 # Data handling

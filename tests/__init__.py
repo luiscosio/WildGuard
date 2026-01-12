@@ -1,1 +1,1 @@
-"""WildGuard test suite."""
+"""DarkPatternMonitor test suite."""

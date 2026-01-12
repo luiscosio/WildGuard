@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "wildguard"
+name = "DarkPatternMonitor"
 version = "0.1.0"
 description = "Scalable Oversight Harness for Dark-Pattern Monitoring in Real LLM Chat Logs"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "WildGuard Team"}
+    {name = "DarkPatternMonitor Team"}
 ]
 keywords = ["llm", "monitoring", "dark-patterns", "nlp", "oversight"]
 classifiers = [
@@ -55,11 +55,11 @@ dev = [
 ]
 
 [project.scripts]
-wildguard-ingest = "src.ingest_wildchat:main"
-wildguard-judge = "src.judge_label:main"
-wildguard-train = "src.train_classifier:main"
-wildguard-infer = "src.infer_wildchat:main"
-wildguard-report = "src.analytics:main"
+DarkPatternMonitor-ingest = "src.ingest_wildchat:main"
+DarkPatternMonitor-judge = "src.judge_label:main"
+DarkPatternMonitor-train = "src.train_classifier:main"
+DarkPatternMonitor-infer = "src.infer_wildchat:main"
+DarkPatternMonitor-report = "src.analytics:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

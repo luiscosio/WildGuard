@@ -17,7 +17,7 @@ RELEASE_DIR = PROJECT_ROOT / "release"
 def create_models_zip(output_path: Path = None) -> Path:
     """Create zip of trained models."""
     if output_path is None:
-        output_path = RELEASE_DIR / f"wildguard_models_{datetime.now().strftime('%Y%m%d')}.zip"
+        output_path = RELEASE_DIR / f"DarkPatternMonitor_models_{datetime.now().strftime('%Y%m%d')}.zip"
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -43,7 +43,7 @@ def create_models_zip(output_path: Path = None) -> Path:
 def create_data_zip(output_path: Path = None, version: str = "v5") -> Path:
     """Create zip of detection outputs and reports."""
     if output_path is None:
-        output_path = RELEASE_DIR / f"wildguard_data_{datetime.now().strftime('%Y%m%d')}.zip"
+        output_path = RELEASE_DIR / f"DarkPatternMonitor_data_{datetime.now().strftime('%Y%m%d')}.zip"
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -77,7 +77,7 @@ def create_data_zip(output_path: Path = None, version: str = "v5") -> Path:
 def create_training_data_zip(output_path: Path = None) -> Path:
     """Create zip of labeled training data."""
     if output_path is None:
-        output_path = RELEASE_DIR / f"wildguard_training_{datetime.now().strftime('%Y%m%d')}.zip"
+        output_path = RELEASE_DIR / f"DarkPatternMonitor_training_{datetime.now().strftime('%Y%m%d')}.zip"
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -99,7 +99,7 @@ def create_training_data_zip(output_path: Path = None) -> Path:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Package WildGuard release files")
+    parser = argparse.ArgumentParser(description="Package DarkPatternMonitor release files")
     parser.add_argument("--models", action="store_true", help="Create models zip")
     parser.add_argument("--data", action="store_true", help="Create data zip")
     parser.add_argument("--training", action="store_true", help="Create training data zip")

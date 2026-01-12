@@ -1,4 +1,4 @@
-"""Utility functions for WildGuard."""
+"""Utility functions for DarkPatternMonitor."""
 
 import json
 import hashlib

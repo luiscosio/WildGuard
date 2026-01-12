@@ -12,11 +12,13 @@ We set out to answer this question by analyzing 100,000 real conversations betwe
 
 Skip training and use our pre-trained classifier and detection results:
 
-| File | Description | Download |
-|------|-------------|----------|
-| **Models** | Pre-trained dark pattern classifier | [darkpatternmonitor_models.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_models.zip) |
-| **Data** | Detection results and analytics | [darkpatternmonitor_data.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_data.zip) |
-| **Training** | Labeled training data | [darkpatternmonitor_training.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_training.zip) |
+📦 **[Download Models & Data from Dropbox](https://www.dropbox.com/scl/fo/zcc7sio5qwhpcf0ron7v6/AEsBy02TY41ThLw6jbJSjUU?rlkey=6dug2cc2935a7ajedg2l4wo1q&dl=0)**
+
+| File | Description |
+|------|-------------|
+| `darkpatternmonitor_models.zip` | Pre-trained dark pattern classifier |
+| `darkpatternmonitor_data.zip` | Detection results and analytics |
+| `darkpatternmonitor_training.zip` | Labeled training data |
 
 Extract to `models/`, `outputs/`, and `data/` directories respectively.
 
@@ -897,11 +899,13 @@ A scalable oversight system that can monitor AI conversations for manipulation a
 
 ### Download Pre-trained Models and Data
 
-| File | Description | Download |
-|------|-------------|----------|
-| **Models** | Pre-trained dark pattern classifier | [darkpatternmonitor_models.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_models.zip) |
-| **Data** | Detection results and analytics | [darkpatternmonitor_data.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_data.zip) |
-| **Training** | Labeled training data (2,448 samples) | [darkpatternmonitor_training.zip](https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_training.zip) |
+📦 **[Download Models & Data from Dropbox](https://www.dropbox.com/scl/fo/zcc7sio5qwhpcf0ron7v6/AEsBy02TY41ThLw6jbJSjUU?rlkey=6dug2cc2935a7ajedg2l4wo1q&dl=0)**
+
+| File | Description |
+|------|-------------|
+| `darkpatternmonitor_models.zip` | Pre-trained dark pattern classifier |
+| `darkpatternmonitor_data.zip` | Detection results and analytics |
+| `darkpatternmonitor_training.zip` | Labeled training data (2,448 samples) |
 
 ### HuggingFace Datasets
 - **DarkBench:** https://huggingface.co/datasets/Apart/DarkBench

@@ -104,5 +104,5 @@ logs/
 notebooks/*.html
 
 # Release packages (large zip files)
-release/
-*.zip
+/release/
+/docs/release/

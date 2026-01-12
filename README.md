@@ -151,10 +151,15 @@ pip install -r requirements.txt
 
 Skip training and use our pre-trained models and detection results:
 
-- **Models**: [darkpatternmonitor.luiscos.io/models](https://darkpatternmonitor.luiscos.io/models) - Pre-trained dark pattern classifier
-- **Data**: [darkpatternmonitor.luiscos.io/data](https://darkpatternmonitor.luiscos.io/data) - Detection results, training data, and reports
+📦 **[Download Models & Data from Dropbox](https://www.dropbox.com/scl/fo/zcc7sio5qwhpcf0ron7v6/AEsBy02TY41ThLw6jbJSjUU?rlkey=6dug2cc2935a7ajedg2l4wo1q&dl=0)**
 
-Extract to `models/` and `outputs/` directories respectively.
+| File | Description |
+|------|-------------|
+| `darkpatternmonitor_models.zip` | Pre-trained dark pattern classifier |
+| `darkpatternmonitor_data.zip` | Detection results and analytics |
+| `darkpatternmonitor_training.zip` | Labeled training data |
+
+Extract to `models/`, `outputs/`, and `data/` directories respectively.
 
 ### Run the Pipeline
 

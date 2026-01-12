@@ -130,13 +130,12 @@
             align-items: center;
             padding: 40px;
             z-index: 1;
-            transition: opacity 0.4s ease 0.4s;
+            transition: opacity 0.3s ease;
         }
 
         .cover-left.hidden {
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
         }
 
         /* Left page display (shows back of flipped pages) */
@@ -153,15 +152,12 @@
                 inset 5px 0 20px rgba(0,0,0,0.03);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
             overflow: hidden;
             z-index: 20;
         }
 
         .left-page-display.visible {
             opacity: 1;
-            pointer-events: none;
-            transition: opacity 0.4s ease 0.4s;
         }
 
         .left-page-display .page-content-wrapper {
@@ -175,27 +171,6 @@
             color: #333;
             font-size: clamp(0.9rem, 1.5vw, 1.1rem);
             line-height: 1.7;
-        }
-
-        /* Inherit all page content styles for left page display */
-        .left-page-display .page-header,
-        .left-page-display .page-title,
-        .left-page-display .page-number,
-        .left-page-display .page-content,
-        .left-page-display .info-card,
-        .left-page-display .warning-box,
-        .left-page-display .quote-box,
-        .left-page-display .metric-row,
-        .left-page-display .metric-box,
-        .left-page-display .insight-list,
-        .left-page-display .insight-item,
-        .left-page-display .category-grid,
-        .left-page-display .category-card,
-        .left-page-display .chart-container,
-        .left-page-display .code-box,
-        .left-page-display .cta-button,
-        .left-page-display .pipeline {
-            /* These will inherit from the existing class definitions */
         }
 
         .cover-left h1 {
@@ -255,15 +230,17 @@
         }
 
         .cover-stat-value {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 800;
             color: var(--accent);
+            white-space: nowrap;
         }
 
         .cover-stat-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: rgba(255,255,255,0.6);
             text-transform: uppercase;
+            line-height: 1.3;
         }
 
         /* ===== PAGE SYSTEM ===== */
@@ -681,6 +658,30 @@
             margin: 0;
         }
 
+        /* Success box */
+        .success-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #fff 100%);
+            border: 2px solid #a7f3d0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 1rem 0;
+        }
+
+        .success-box h4 {
+            color: #065f46;
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .success-box p {
+            color: #047857;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
         /* Code box */
         .code-box {
             background: #1e293b;
@@ -713,6 +714,142 @@
         .cta-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Comparison boxes */
+        .comparison-row {
+            display: flex;
+            gap: 15px;
+            margin: 1rem 0;
+        }
+
+        .comparison-box {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-top: 4px solid;
+        }
+
+        .comparison-box.gpt4 {
+            border-color: var(--danger);
+        }
+
+        .comparison-box.gpt35 {
+            border-color: var(--success);
+        }
+
+        .comparison-box h5 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 8px;
+            color: var(--bg-dark);
+        }
+
+        .comparison-box .big-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .comparison-box.gpt4 .big-number {
+            color: var(--danger);
+        }
+
+        .comparison-box.gpt35 .big-number {
+            color: var(--success);
+        }
+
+        .comparison-box .label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* Escalation chart */
+        .escalation-bar {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .escalation-label {
+            width: 80px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .escalation-track {
+            flex: 1;
+            height: 24px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .escalation-fill {
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .escalation-value {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* Tier cards */
+        .tier-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 1rem 0;
+        }
+
+        .tier-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .tier-card.high {
+            border-left: 4px solid var(--danger);
+        }
+
+        .tier-card.medium {
+            border-left: 4px solid var(--accent);
+        }
+
+        .tier-card.low {
+            border-left: 4px solid var(--success);
+        }
+
+        .tier-icon {
+            font-size: 1.5rem;
+        }
+
+        .tier-content h5 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            color: var(--bg-dark);
+            margin-bottom: 2px;
+        }
+
+        .tier-content p {
+            font-size: 0.75rem;
+            color: #666;
+            margin: 0;
         }
 
         /* ===== NAVIGATION ===== */
@@ -837,7 +974,6 @@
             padding: 40px;
             color: white;
             z-index: 0;
-            transition: z-index 0s 0.4s;
         }
 
         .back-cover.visible {
@@ -946,7 +1082,6 @@
                 overflow: visible !important;
             }
 
-            /* Hide book spine shadow on mobile */
             .book::before {
                 display: none !important;
             }
@@ -955,12 +1090,10 @@
                 transform: none !important;
             }
 
-            /* Hide left page display on mobile - show only right page */
             .left-page-display {
                 display: none !important;
             }
 
-            /* Cover takes full width on mobile and fills screen */
             .cover-left {
                 width: 100% !important;
                 border-radius: 12px !important;
@@ -987,15 +1120,6 @@
                 gap: 10px;
             }
 
-            .cover-stat {
-                padding: 8px 15px;
-            }
-
-            .cover-stat-value {
-                font-size: 1.5rem !important;
-            }
-
-            /* Pages take full width on mobile */
             .pages-container {
                 width: 100% !important;
                 left: 0 !important;
@@ -1006,7 +1130,6 @@
                 gap: 0 !important;
             }
 
-            /* Each page container in mobile */
             .page {
                 width: 100% !important;
                 transform-origin: center center !important;
@@ -1018,12 +1141,10 @@
                 transform: none !important;
             }
 
-            /* Hide flipped pages completely */
             .page.flipped {
                 display: none !important;
             }
 
-            /* Each face takes full screen */
             .page-face {
                 border-radius: 12px !important;
                 padding: 25px 20px !important;
@@ -1039,13 +1160,6 @@
                 background: var(--paper) !important;
             }
 
-            /* Make page-header part of centered content */
-            .page-header {
-                position: relative !important;
-                margin-bottom: 1rem !important;
-            }
-
-            /* Make both front and back visible in mobile */
             .page-front,
             .page-back {
                 position: relative !important;
@@ -1053,38 +1167,16 @@
                 backface-visibility: visible !important;
             }
 
-            /* Remove ALL inset shadows that simulate page binding */
-            .page-front,
-            .page-back,
-            .cover-left,
-            .left-page-display,
-            .back-cover {
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-            }
-
-            /* Remove the page edge effect (vertical line) */
             .page-front::before,
             .page-back::before {
                 display: none !important;
             }
 
-            /* Show BOTH faces on mobile - back is visible after front */
             .page-back {
                 display: flex !important;
                 position: relative !important;
             }
 
-            /* Center page content */
-            .page-content {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                flex: 0 1 auto;
-                overflow-y: visible;
-                max-height: none;
-            }
-
-            /* Back cover full width and centered */
             .back-cover {
                 width: 100% !important;
                 border-radius: 12px !important;
@@ -1099,138 +1191,20 @@
                 margin-top: 15px !important;
             }
 
-            .back-cover h2 {
-                font-size: 1.5rem !important;
-            }
-
-            /* Smaller text on mobile */
-            .page-title {
-                font-size: 1.3rem !important;
-            }
-
-            .page-content {
-                font-size: 0.85rem !important;
-            }
-
-            .page-content p {
-                margin-bottom: 0.8rem !important;
-            }
-
-            /* Smaller hero stat */
-            .hero-stat-value {
-                font-size: 2.5rem !important;
-            }
-
-            /* Smaller info cards */
-            .info-card {
-                padding: 12px !important;
-                margin-bottom: 10px !important;
-            }
-
-            .info-card h4 {
-                font-size: 0.9rem !important;
-            }
-
-            /* Smaller charts */
-            .chart-bar {
-                margin-bottom: 8px !important;
-            }
-
-            .chart-label {
-                font-size: 0.7rem !important;
-                min-width: 70px !important;
-            }
-
-            .chart-value {
-                font-size: 0.7rem !important;
-            }
-
-            /* Insight list mobile */
-            .insight-item {
-                padding: 10px !important;
-            }
-
-            .insight-item h5 {
-                font-size: 0.85rem !important;
-            }
-
-            .insight-item p {
-                font-size: 0.75rem !important;
-            }
-
-            /* Warning box mobile */
-            .warning-box {
-                padding: 12px !important;
-            }
-
-            .warning-box h4 {
-                font-size: 0.9rem !important;
-            }
-
-            /* Code box mobile */
-            .code-box {
-                font-size: 0.7rem !important;
-                padding: 12px !important;
-            }
-
-            /* Category grid 2 columns on mobile */
-            .category-grid {
-                grid-template-columns: 1fr 1fr !important;
-                gap: 8px !important;
-            }
-
-            .category-card {
-                padding: 8px !important;
-            }
-
-            .category-card .emoji {
-                font-size: 1.2rem !important;
-            }
-
-            .category-card h5 {
-                font-size: 0.7rem !important;
-            }
-
-            /* Navigation - hide dots on mobile, keep buttons for easier navigation */
             .nav-container {
                 padding: 15px 20px !important;
-            }
-
-            .nav-btn {
-                width: 50px !important;
-                height: 50px !important;
-                font-size: 1.5rem !important;
             }
 
             .page-dots {
                 display: none !important;
             }
-            }
 
-            /* Metric boxes mobile */
-            .metric-row {
+            .metric-row, .comparison-row {
                 flex-direction: column;
                 gap: 10px !important;
             }
-
-            .metric-box {
-                padding: 12px !important;
-            }
-
-            .metric-box-value {
-                font-size: 1.5rem !important;
-            }
-
-            /* CTA button mobile */
-            .cta-button {
-                padding: 12px 20px !important;
-                font-size: 0.9rem !important;
-            }
         }
     </style>
-</head>
-<body>
-    <!-- Progress Bar -->
     <div class="progress-bar" id="progressBar" style="width: 0%"></div>
 
     <!-- Floating Particles -->
@@ -1254,20 +1228,21 @@
                     <p class="subtitle">Detecting and measuring manipulative<br>AI behaviors in the wild.</p>
                     <div class="cover-stats">
                         <div class="cover-stat">
-                            <div class="cover-stat-value">280K</div>
-                            <div class="cover-stat-label">Turns Analyzed</div>
+                            <div class="cover-stat-value">GPT-4 > 3.5</div>
+                            <div class="cover-stat-label">p < 10⁻³⁶</div>
                         </div>
                         <div class="cover-stat">
-                            <div class="cover-stat-value">1.3%</div>
-                            <div class="cover-stat-label">Flag Rate</div>
+                            <div class="cover-stat-value">+100%</div>
+                            <div class="cover-stat-label">Escalation in Long Chats</div>
                         </div>
                         <div class="cover-stat">
-                            <div class="cover-stat-value">78.7%</div>
-                            <div class="cover-stat-label">Accuracy</div>
+                            <div class="cover-stat-value">5×</div>
+                            <div class="cover-stat-label">Higher in Roleplay</div>
                         </div>
                     </div>
+                    <p style="margin-top: 1.5rem; font-size: 0.85rem; opacity: 0.7;">100K real ChatGPT conversations · 280K turns analyzed</p>
                     <div class="cover-badge">
-                        <span>📖</span> Use arrows below to navigate
+                        <span>📖</span> Use arrows to navigate
                     </div>
                 </div>
 
@@ -1281,21 +1256,37 @@
                     <h2>🎉 Thank You!</h2>
                     <p style="font-size: 1.1rem;">Built for Apart Research AI Manipulation Hackathon</p>
                     <p style="margin-top: 0.5rem; font-size: 1rem;"><strong>Team DarkPatternMonitor</strong><br>Fernando · Godric · Ricardo · Luis</p>
-                    <div class="back-links" style="margin-top: 1.5rem;">
-                        <a href="https://github.com/luiscosio/DarkPatternMonitor" target="_blank" class="back-link" onclick="event.stopPropagation()">📂 GitHub</a>
-                        <a href="https://arxiv.org/abs/2503.10728" target="_blank" class="back-link" onclick="event.stopPropagation()">📄 DarkBench Paper</a>
-                        <a href="https://huggingface.co/datasets/allenai/WildChat-1M" target="_blank" class="back-link" onclick="event.stopPropagation()">📊 WildChat Dataset</a>
+                    
+                    <!-- Our Resources -->
+                    <div style="margin-top: 1.5rem;">
+                        <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Our Resources</p>
+                        <div class="back-links">
+                            <a href="https://github.com/luiscosio/DarkPatternMonitor" target="_blank" class="back-link" onclick="event.stopPropagation()">📂 GitHub</a>
+                            <a href="https://darkpatternmonitor.luiscos.io/paper/DarkPatternMonitor-Paper.pdf" target="_blank" class="back-link" onclick="event.stopPropagation()">📄 Paper</a>
+                            <a href="https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_models.zip" target="_blank" class="back-link" onclick="event.stopPropagation()">🤖 Models</a>
+                            <a href="https://darkpatternmonitor.luiscos.io/release/darkpatternmonitor_data.zip" target="_blank" class="back-link" onclick="event.stopPropagation()">📊 Data</a>
+                        </div>
                     </div>
-                    <div style="margin-top: 2rem; padding: 15px 25px; background: rgba(255,255,255,0.1); border-radius: 12px; text-align: center;">
-                        <p style="font-size: 0.85rem; opacity: 0.9; margin: 0;">⚠️ <strong>Important:</strong> This tool includes dual-use considerations.<br>See our paper appendix for ethical guidelines.</p>
+                    
+                    <!-- References -->
+                    <div style="margin-top: 1.5rem;">
+                        <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">References</p>
+                        <div class="back-links">
+                            <a href="https://arxiv.org/abs/2503.10728" target="_blank" class="back-link" onclick="event.stopPropagation()" style="font-size: 0.8rem;">DarkBench</a>
+                            <a href="https://huggingface.co/datasets/allenai/WildChat-1M" target="_blank" class="back-link" onclick="event.stopPropagation()" style="font-size: 0.8rem;">WildChat</a>
+                        </div>
                     </div>
-                    <p style="margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.7;">Press ← to go back</p>
+                    
+                    <div style="margin-top: 1.5rem; padding: 12px 20px; background: rgba(255,255,255,0.1); border-radius: 12px; text-align: center;">
+                        <p style="font-size: 0.8rem; opacity: 0.9; margin: 0;">⚠️ See paper appendix for dual-use considerations</p>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.6;">Press ← to go back</p>
                 </div>
 
                 <!-- Pages Container -->
                 <div class="pages-container">
-                    <!-- Page 1 -->
-                    <div class="page" data-page="1" style="z-index: 13;">
+                    <!-- Page 1: The Problem -->
+                    <div class="page" data-page="1" style="z-index: 20;">
                         <div class="page-face page-front">
                             <div class="page-header">
                                 <h2 class="page-title">The Problem</h2>
@@ -1309,7 +1300,7 @@
                                     <div class="hero-stat-label">of AI responses show manipulation markers</div>
                                 </div>
 
-                                <p>We analyzed <strong>280,259 real assistant turns</strong> from 100,000 ChatGPT conversations to find out how often AI assistants exhibit "dark patterns" — subtle manipulation techniques.</p>
+                                <p>We analyzed <strong>280,259 real assistant turns</strong> from 100,000 ChatGPT conversations to find out how often AI assistants exhibit "dark patterns" - subtle manipulation techniques.</p>
                             </div>
                         </div>
                         <div class="page-face page-back">
@@ -1331,8 +1322,8 @@
                         </div>
                     </div>
 
-                    <!-- Page 2 -->
-                    <div class="page" data-page="2" style="z-index: 12;">
+                    <!-- Page 2: Six Dark Patterns -->
+                    <div class="page" data-page="2" style="z-index: 19;">
                         <div class="page-face page-front">
                             <div class="page-header">
                                 <h2 class="page-title">Six Dark Patterns</h2>
@@ -1392,29 +1383,299 @@
                         </div>
                     </div>
 
-                    <!-- Page 3 -->
-                    <div class="page" data-page="3" style="z-index: 11;">
+                    <!-- Page 3: KEY FINDING - GPT-4 vs GPT-3.5 -->
+                    <div class="page" data-page="3" style="z-index: 18;">
                         <div class="page-face page-front">
                             <div class="page-header">
-                                <h2 class="page-title">Detection Pipeline</h2>
+                                <h2 class="page-title">🔥 Key Finding #1</h2>
                                 <div class="page-number">5</div>
+                            </div>
+                            <div class="page-content">
+                                <p style="font-size: 1.1rem; font-weight: 600; color: var(--danger);">GPT-4 shows MORE dark patterns than GPT-3.5</p>
+                                
+                                <div class="comparison-row">
+                                    <div class="comparison-box gpt4">
+                                        <h5>GPT-4</h5>
+                                        <div class="big-number">2.3%</div>
+                                        <div class="label">flag rate</div>
+                                        <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">78,018 turns</div>
+                                    </div>
+                                    <div class="comparison-box gpt35">
+                                        <h5>GPT-3.5</h5>
+                                        <div class="big-number">1.6%</div>
+                                        <div class="label">flag rate</div>
+                                        <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">202,241 turns</div>
+                                    </div>
+                                </div>
+
+                                <div class="success-box">
+                                    <h4>📊 Statistical Significance</h4>
+                                    <p><strong>Chi-squared test: p < 10⁻³⁶</strong><br>This is not random chance. The more capable model exhibits significantly more manipulation patterns.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-face page-back">
+                            <div class="page-header">
+                                <h2 class="page-title">Why More Capable = More Manipulation?</h2>
+                                <div class="page-number">6</div>
+                            </div>
+                            <div class="page-content">
+                                <p>This counterintuitive finding has important implications:</p>
+                                <div class="insight-list">
+                                    <div class="insight-item">
+                                        <span class="emoji">🧠</span>
+                                        <div>
+                                            <h5>Better at Human Mimicry</h5>
+                                            <p>GPT-4 is better at mimicking human rapport-building behaviors, which can include manipulation patterns.</p>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <span class="emoji">⚡</span>
+                                        <div>
+                                            <h5>RLHF Side Effects</h5>
+                                            <p>Optimizing for "helpfulness" may inadvertently train models to be more agreeable and flattering.</p>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <span class="emoji">🎯</span>
+                                        <div>
+                                            <h5>Safety Implications</h5>
+                                            <p>As models become more capable, we need stronger oversight, not weaker.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Page 4: KEY FINDING - Multi-turn Escalation -->
+                    <div class="page" data-page="4" style="z-index: 17;">
+                        <div class="page-face page-front">
+                            <div class="page-header">
+                                <h2 class="page-title">🔥 Key Finding #2</h2>
+                                <div class="page-number">7</div>
+                            </div>
+                            <div class="page-content">
+                                <p style="font-size: 1.1rem; font-weight: 600; color: var(--danger);">Dark patterns ESCALATE in longer conversations</p>
+                                
+                                <div class="chart-container">
+                                    <div class="escalation-bar">
+                                        <span class="escalation-label">Turns 1-5</span>
+                                        <div class="escalation-track">
+                                            <div class="escalation-fill" style="width: 40%; background: linear-gradient(90deg, #10b981, #34d399);">
+                                                <span class="escalation-value">1.3% (baseline)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="escalation-bar">
+                                        <span class="escalation-label">Turns 6-10</span>
+                                        <div class="escalation-track">
+                                            <div class="escalation-fill" style="width: 55%; background: linear-gradient(90deg, #f59e0b, #fbbf24);">
+                                                <span class="escalation-value">1.8% (+38%)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="escalation-bar">
+                                        <span class="escalation-label">Turns 11-20</span>
+                                        <div class="escalation-track">
+                                            <div class="escalation-fill" style="width: 68%; background: linear-gradient(90deg, #f97316, #fb923c);">
+                                                <span class="escalation-value">2.2% (+69%)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="escalation-bar">
+                                        <span class="escalation-label">Turns 20+</span>
+                                        <div class="escalation-track">
+                                            <div class="escalation-fill" style="width: 80%; background: linear-gradient(90deg, #ef4444, #f87171);">
+                                                <span class="escalation-value">2.6% (+100%)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="warning-box">
+                                    <h4>📈 Regression Analysis</h4>
+                                    <p><strong>p-value = 0.0035</strong> - Only 0.35% chance this trend is random noise.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-face page-back">
+                            <div class="page-header">
+                                <h2 class="page-title">Per-Category Escalation</h2>
+                                <div class="page-number">8</div>
+                            </div>
+                            <div class="page-content">
+                                <p>Not all patterns escalate equally:</p>
+                                <div class="chart-container">
+                                    <div class="chart-bar">
+                                        <span class="chart-label">Sycophancy</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 85%; --fill-color: #ef4444; --fill-color-light: #f87171;">
+                                                <span class="chart-value">+42%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <span class="chart-label">Sneaking</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 50%; --fill-color: #f59e0b; --fill-color-light: #fbbf24;">
+                                                <span class="chart-value">+20%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <span class="chart-label">Retention</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 45%; --fill-color: #8b5cf6; --fill-color-light: #a78bfa;">
+                                                <span class="chart-value">+18%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <span class="chart-label">Harmful Gen</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 30%; --fill-color: #10b981; --fill-color-light: #34d399;">
+                                                <span class="chart-value">-41%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p style="margin-top: 1rem;"><strong>Key insight:</strong> Sycophancy builds over time as the AI "learns" what users want to hear. Harmful content appears early (jailbreak attempts) or not at all.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Page 5: KEY FINDING - Topic Analysis -->
+                    <div class="page" data-page="5" style="z-index: 16;">
+                        <div class="page-face page-front">
+                            <div class="page-header">
+                                <h2 class="page-title">🔥 Key Finding #3</h2>
+                                <div class="page-number">9</div>
+                            </div>
+                            <div class="page-content">
+                                <p style="font-size: 1.1rem; font-weight: 600; color: var(--danger);">Roleplay topics show 5x higher manipulation rates</p>
+                                
+                                <div class="chart-container">
+                                    <div class="chart-bar">
+                                        <span class="chart-label">Character RP</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 100%; --fill-color: #ef4444; --fill-color-light: #f87171;">
+                                                <span class="chart-value">4.14%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <span class="chart-label">Technical</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 67%; --fill-color: #f59e0b; --fill-color-light: #fbbf24;">
+                                                <span class="chart-value">2.77%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <span class="chart-label">User Help</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 40%; --fill-color: #8b5cf6; --fill-color-light: #a78bfa;">
+                                                <span class="chart-value">1.64%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <span class="chart-label">Coding</span>
+                                        <div class="chart-track">
+                                            <div class="chart-fill" style="width: 5%; --fill-color: #10b981; --fill-color-light: #34d399;">
+                                                <span class="chart-value">0.08%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p style="margin-top: 1rem;">We clustered 98,713 conversations into 10 topics using sentence embeddings + KMeans.</p>
+                            </div>
+                        </div>
+                        <div class="page-face page-back">
+                            <div class="page-header">
+                                <h2 class="page-title">Three-Tier Monitoring</h2>
+                                <div class="page-number">10</div>
+                            </div>
+                            <div class="page-content">
+                                <p>Our findings suggest a monitoring framework:</p>
+                                <div class="tier-grid">
+                                    <div class="tier-card high">
+                                        <span class="tier-icon">🔴</span>
+                                        <div class="tier-content">
+                                            <h5>HIGH ALERT: Character/Roleplay</h5>
+                                            <p>Flag all conversations. 5x standard review rate.</p>
+                                        </div>
+                                    </div>
+                                    <div class="tier-card medium">
+                                        <span class="tier-icon">🟡</span>
+                                        <div class="tier-content">
+                                            <h5>ESCALATION WATCH: User Help</h5>
+                                            <p>Alert when turn count > 10. Sample for review.</p>
+                                        </div>
+                                    </div>
+                                    <div class="tier-card low">
+                                        <span class="tier-icon">🟢</span>
+                                        <div class="tier-content">
+                                            <h5>STANDARD: Coding/Technical</h5>
+                                            <p>Lightweight automated monitoring only.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.85rem; margin-top: 1rem;">Threshold: Flag responses with classifier confidence > 0.8 for human review.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Page 6: Benchmark Gap -->
+                    <div class="page" data-page="6" style="z-index: 15;">
+                        <div class="page-face page-front">
+                            <div class="page-header">
+                                <h2 class="page-title">Benchmark ≠ Reality</h2>
+                                <div class="page-number">11</div>
+                            </div>
+                            <div class="page-content">
+                                <p>Does DarkBench predict real-world behavior?</p>
+                                <div class="metric-row">
+                                    <div class="metric-box">
+                                        <div class="metric-box-value" style="color: #10b981;">0.08</div>
+                                        <div class="metric-box-label">JS Divergence</div>
+                                    </div>
+                                    <div class="metric-box">
+                                        <div class="metric-box-value" style="color: #f59e0b;">0.33</div>
+                                        <div class="metric-box-label">KL Divergence</div>
+                                    </div>
+                                </div>
+                                <div class="warning-box">
+                                    <h4>📊 Category Gaps</h4>
+                                    <p><strong>DarkBench over-represents:</strong> sneaking, retention<br>
+                                    <strong>Reality shows more:</strong> harmful_generation than expected</p>
+                                </div>
+                                <p style="margin-top: 0.5rem;"><strong>Implication:</strong> Benchmarks don't predict real-world behavior. We need ecological validity in AI safety research.</p>
+                            </div>
+                        </div>
+                        <div class="page-face page-back">
+                            <div class="page-header">
+                                <h2 class="page-title">Detection Pipeline</h2>
+                                <div class="page-number">12</div>
                             </div>
                             <div class="page-content">
                                 <p>How do we detect dark patterns at scale?</p>
                                 <div class="pipeline">
                                     <div class="pipeline-step">
                                         <div class="icon">📥</div>
-                                        <span>Ingest Data</span>
+                                        <span>Ingest</span>
                                     </div>
                                     <span class="pipeline-arrow">→</span>
                                     <div class="pipeline-step">
                                         <div class="icon">🤖</div>
-                                        <span>LLM Judge</span>
+                                        <span>Judge</span>
                                     </div>
                                     <span class="pipeline-arrow">→</span>
                                     <div class="pipeline-step">
                                         <div class="icon">🎓</div>
-                                        <span>Train Model</span>
+                                        <span>Train</span>
                                     </div>
                                     <span class="pipeline-arrow">→</span>
                                     <div class="pipeline-step">
@@ -1427,172 +1688,58 @@
                                         <span>Analyze</span>
                                     </div>
                                 </div>
-                                <div class="info-card">
-                                    <h4>Why not just use an LLM judge?</h4>
-                                    <p>Cost! Judging 1 million conversations with Claude would cost $10,000+. Our lightweight classifier processes 200 samples/minute for free.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="page-face page-back">
-                            <div class="page-header">
-                                <h2 class="page-title">Classifier Performance</h2>
-                                <div class="page-number">6</div>
-                            </div>
-                            <div class="page-content">
-                                <p>Our model trained on 1,302 labeled examples:</p>
                                 <div class="metric-row">
                                     <div class="metric-box">
-                                        <div class="metric-box-value">78%</div>
-                                        <div class="metric-box-label">Macro F1 Score</div>
+                                        <div class="metric-box-value">78.7%</div>
+                                        <div class="metric-box-label">Accuracy</div>
                                     </div>
                                     <div class="metric-box">
-                                        <div class="metric-box-value">87%</div>
-                                        <div class="metric-box-label">Train F1</div>
+                                        <div class="metric-box-value">5K</div>
+                                        <div class="metric-box-label">samples/min</div>
                                     </div>
-                                </div>
-                                <div class="info-card">
-                                    <h4><span class="info-card-icon">🧠</span> Architecture</h4>
-                                    <p><strong>Embeddings:</strong> all-MiniLM-L6-v2 (384 dims)<br>
-                                    <strong>Classifier:</strong> Logistic Regression with balanced weights</p>
-                                </div>
-                                <p>This means our detector correctly identifies dark patterns about 8 out of 10 times.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Page 4 -->
-                    <div class="page" data-page="4" style="z-index: 10;">
-                        <div class="page-face page-front">
-                            <div class="page-header">
-                                <h2 class="page-title">The Results</h2>
-                                <div class="page-number">7</div>
-                            </div>
-                            <div class="page-content">
-                                <p>Breakdown by category (N=280,259 turns):</p>
-                                <div class="chart-container">
-                                    <div class="chart-bar">
-                                        <span class="chart-label">anthropo</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 70%; --fill-color: #8b5cf6; --fill-color-light: #a78bfa;">
-                                                <span class="chart-value">0.66%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <span class="chart-label">harmful_gen</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 50%; --fill-color: #ef4444; --fill-color-light: #f87171;">
-                                                <span class="chart-value">0.37%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <span class="chart-label">brand_bias</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 25%; --fill-color: #3b82f6; --fill-color-light: #60a5fa;">
-                                                <span class="chart-value">0.14%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <span class="chart-label">sneaking</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 20%; --fill-color: #ec4899; --fill-color-light: #f472b6;">
-                                                <span class="chart-value">0.12%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <span class="chart-label">retention</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 10%; --fill-color: #f59e0b; --fill-color-light: #fbbf24;">
-                                                <span class="chart-value">0.02%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="chart-bar">
-                                        <span class="chart-label">sycophancy</span>
-                                        <div class="chart-track">
-                                            <div class="chart-fill" style="width: 10%; --fill-color: #10b981; --fill-color-light: #34d399;">
-                                                <span class="chart-value">0.02%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="page-face page-back">
-                            <div class="page-header">
-                                <h2 class="page-title">Benchmark vs Reality</h2>
-                                <div class="page-number">8</div>
-                            </div>
-                            <div class="page-content">
-                                <p>Does DarkBench predict real behavior?</p>
-                                <div class="metric-row">
-                                    <div class="metric-box">
-                                        <div class="metric-box-value" style="color: #10b981;">0.08</div>
-                                        <div class="metric-box-label">JS Divergence</div>
-                                    </div>
-                                    <div class="metric-box">
-                                        <div class="metric-box-value" style="color: #f59e0b;">0.33</div>
-                                        <div class="metric-box-label">KL Divergence</div>
-                                    </div>
-                                </div>
-                                <p>Low JS divergence means the benchmark reasonably represents reality. However, some gaps exist:</p>
-                                <div class="warning-box">
-                                    <h4>📊 Category Gaps</h4>
-                                    <p><strong>Over-represented:</strong> sneaking (16%), retention (15%)<br>
-                                    <strong>Under-represented:</strong> harmful_gen in wild is higher than expected</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Page 5 -->
-                    <div class="page" data-page="5" style="z-index: 9;">
+                    <!-- Page 7: Critical Gap & Call to Action -->
+                    <div class="page" data-page="7" style="z-index: 14;">
                         <div class="page-face page-front">
                             <div class="page-header">
-                                <h2 class="page-title">Key Insights</h2>
-                                <div class="page-number">9</div>
+                                <h2 class="page-title">🚨 Critical Gap</h2>
+                                <div class="page-number">13</div>
                             </div>
                             <div class="page-content">
-                                <div class="insight-list">
-                                    <div class="insight-item">
-                                        <span class="emoji">🔍</span>
-                                        <div>
-                                            <h5>Patterns Are Rare but Real</h5>
-                                            <p>1.3% of 280K turns flagged (~3,600 cases). Low rate, but measurable at scale.</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-item">
-                                        <span class="emoji">⚠️</span>
-                                        <div>
-                                            <h5>Anthropomorphism Leads</h5>
-                                            <p>AI claiming human emotions (0.66%) is the most common pattern, followed by harmful content (0.37%).</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-item">
-                                        <span class="emoji">📈</span>
-                                        <div>
-                                            <h5>Escalation Over Time</h5>
-                                            <p>Sycophancy increases +42% in longer conversations. Dark patterns grow as rapport builds.</p>
-                                        </div>
-                                    </div>
+                                <div class="warning-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fff 100%); border-color: #fca5a5;">
+                                    <h4 style="color: #991b1b;">The AI safety community needs frontier model data</h4>
+                                    <p style="color: #7f1d1d;">WildChat contains GPT-3.5/GPT-4 from 2023-2024. We have NO equivalent dataset for Claude, Gemini, or GPT-4o.</p>
+                                </div>
+                                
+                                <p style="margin-top: 1rem;"><strong>Why this matters:</strong></p>
+                                <ul style="margin-left: 1.5rem; color: #555; margin-top: 0.5rem; font-size: 0.9rem;">
+                                    <li>Frontier models may exhibit <em>different</em> patterns due to updated RLHF</li>
+                                    <li>New capabilities (multimodal, agentic) may introduce <em>novel</em> dark patterns</li>
+                                    <li>Cross-provider analysis is impossible without data</li>
+                                </ul>
+
+                                <div class="success-box" style="margin-top: 1rem;">
+                                    <h4>📢 Our Call to Action</h4>
+                                    <p>AI labs should collaborate on creating an updated, multi-model conversation dataset with proper consent.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="page-face page-back">
                             <div class="page-header">
                                 <h2 class="page-title">Important Caveats</h2>
-                                <div class="page-number">10</div>
+                                <div class="page-number">14</div>
                             </div>
                             <div class="page-content">
                                 <div class="warning-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fff 100%); border-color: #fbbf24;">
                                     <h4 style="color: #92400e;">⚠️ We Detect Markers, Not Intent</h4>
-                                    <p style="color: #78350f;">An AI saying "I feel" isn't "trying" to manipulate. It may simply be following training patterns. Our findings should not be interpreted as evidence of intentional deception.</p>
+                                    <p style="color: #78350f;">An AI saying "I feel" isn't "trying" to manipulate. Our findings should not be interpreted as evidence of intentional deception.</p>
                                 </div>
                                 <p><strong>Limitations:</strong></p>
-                                <ul style="margin-left: 1.5rem; color: #555;">
+                                <ul style="margin-left: 1.5rem; color: #555; font-size: 0.9rem;">
                                     <li>78% accuracy means 22% errors</li>
                                     <li>English-only training data</li>
                                     <li>ChatGPT only (no Claude, Gemini)</li>
@@ -1602,12 +1749,12 @@
                         </div>
                     </div>
 
-                    <!-- Page 6 -->
-                    <div class="page" data-page="6" style="z-index: 8;">
+                    <!-- Page 8: Try It & Ethics -->
+                    <div class="page" data-page="8" style="z-index: 13;">
                         <div class="page-face page-front">
                             <div class="page-header">
                                 <h2 class="page-title">Try It Yourself</h2>
-                                <div class="page-number">11</div>
+                                <div class="page-number">15</div>
                             </div>
                             <div class="page-content">
                                 <p>DarkPatternMonitor is fully open source:</p>
@@ -1625,105 +1772,22 @@
                         </div>
                         <div class="page-face page-back">
                             <div class="page-header">
-                                <h2 class="page-title">What's Next?</h2>
-                                <div class="page-number">12</div>
-                            </div>
-                            <div class="page-content">
-                                <p>Future improvements we're considering:</p>
-                                <div class="insight-list">
-                                    <div class="insight-item">
-                                        <span class="emoji">🔄</span>
-                                        <div>
-                                            <h5>Multi-turn Detection</h5>
-                                            <p>Track manipulation accumulating over 5 to 10 turns</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-item">
-                                        <span class="emoji">🌍</span>
-                                        <div>
-                                            <h5>Cross-Provider Analysis</h5>
-                                            <p>Compare ChatGPT vs Claude vs Gemini</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-item">
-                                        <span class="emoji">📋</span>
-                                        <div>
-                                            <h5>Industry Standards</h5>
-                                            <p>Help establish acceptable dark pattern rates</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p style="text-align: center; margin-top: 1rem; font-size: 2rem;">🛡️</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Page 7: Dual-Use & Ethics (MANDATORY) -->
-                    <div class="page" data-page="7" style="z-index: 7;">
-                        <div class="page-face page-front">
-                            <div class="page-header">
                                 <h2 class="page-title">⚖️ Dual-Use Risks</h2>
-                                <div class="page-number">13</div>
+                                <div class="page-number">16</div>
                             </div>
                             <div class="page-content">
                                 <div class="warning-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fff 100%); border-color: #fca5a5;">
                                     <h4 style="color: #991b1b;">⚠️ This Tool Could Be Misused</h4>
-                                    <p style="color: #7f1d1d;">The same techniques that detect dark patterns could potentially train more manipulative AI systems.</p>
+                                    <p style="color: #7f1d1d;">Detection techniques could potentially train more manipulative AI systems.</p>
                                 </div>
-                                <p style="margin-top: 1rem;"><strong>Potential misuse scenarios:</strong></p>
-                                <ul style="margin-left: 1.5rem; color: #555; margin-top: 0.5rem;">
-                                    <li>Training adversarial prompts to evade detection</li>
-                                    <li>Fine-tuning models to be MORE manipulative</li>
-                                    <li>A/B testing manipulation strategies</li>
-                                </ul>
-                                <p style="margin-top: 1rem;"><strong>Our mitigations:</strong></p>
-                                <ul style="margin-left: 1.5rem; color: #555; margin-top: 0.5rem;">
+                                <p style="margin-top: 0.5rem;"><strong>Our mitigations:</strong></p>
+                                <ul style="margin-left: 1.5rem; color: #555; font-size: 0.85rem;">
                                     <li>Detection-only focus (no generation tools)</li>
                                     <li>Aggregated reporting (no playbooks)</li>
                                     <li>Confidence thresholds (clear cases only)</li>
                                 </ul>
-                            </div>
-                        </div>
-                        <div class="page-face page-back">
-                            <div class="page-header">
-                                <h2 class="page-title">🔒 Ethical Guidelines</h2>
-                                <div class="page-number">14</div>
-                            </div>
-                            <div class="page-content">
-                                <p><strong>Intended uses:</strong></p>
-                                <div class="insight-list" style="margin-top: 0.5rem;">
-                                    <div class="insight-item" style="border-left: 4px solid #10b981;">
-                                        <span class="emoji">✅</span>
-                                        <div>
-                                            <h5>AI Safety Research</h5>
-                                            <p>Understanding manipulation in AI systems</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-item" style="border-left: 4px solid #10b981;">
-                                        <span class="emoji">✅</span>
-                                        <div>
-                                            <h5>Model Evaluation</h5>
-                                            <p>Benchmarking AI behavior patterns</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p style="margin-top: 1rem;"><strong>Prohibited uses:</strong></p>
-                                <div class="insight-list" style="margin-top: 0.5rem;">
-                                    <div class="insight-item" style="border-left: 4px solid #ef4444;">
-                                        <span class="emoji">❌</span>
-                                        <div>
-                                            <h5>User Surveillance</h5>
-                                            <p>Monitoring individual conversations</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-item" style="border-left: 4px solid #ef4444;">
-                                        <span class="emoji">❌</span>
-                                        <div>
-                                            <h5>Training Manipulative AI</h5>
-                                            <p>Using data to create harmful systems</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <p style="margin-top: 0.5rem;"><strong>Intended uses:</strong> ✅ AI safety research, ✅ Model evaluation</p>
+                                <p><strong>Prohibited:</strong> ❌ User surveillance, ❌ Training manipulative AI</p>
                             </div>
                         </div>
                     </div>
@@ -1768,7 +1832,7 @@
             particlesContainer.appendChild(particle);
         }
 
-        // Update UI
+        // Simple, symmetric update function
         function updateUI() {
             // Update dots
             document.querySelectorAll('.page-dot').forEach((dot, i) => {
@@ -1783,16 +1847,21 @@
             const progress = (currentPage / totalPages) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
 
-            // Update left page display
+            // Update left page display and covers
             const coverLeft = document.getElementById('coverLeft');
             const leftPageDisplay = document.getElementById('leftPageDisplay');
             const leftPageContent = document.getElementById('leftPageContent');
             const backCover = document.getElementById('backCover');
 
-            if (currentPage > 0) {
-                // Hide cover, show left page display
+            if (currentPage === 0) {
+                // Show cover, hide everything else
+                coverLeft.classList.remove('hidden');
+                leftPageDisplay.classList.remove('visible');
+                leftPageContent.innerHTML = '';
+                backCover.classList.remove('visible');
+            } else {
+                // Hide cover
                 coverLeft.classList.add('hidden');
-                leftPageDisplay.classList.add('visible');
                 
                 // Show back cover only when all pages are flipped
                 if (currentPage === totalPages) {
@@ -1801,49 +1870,22 @@
                     backCover.classList.remove('visible');
                 }
                 
-                // The left page shows the back of the most recently flipped page
-                // When currentPage = 1, we show pages[0].page-back
-                // When currentPage = 2, we show pages[1].page-back, etc.
+                // Update left page content immediately (symmetric behavior)
                 const pageIndex = currentPage - 1;
-                console.log('updateUI: currentPage=', currentPage, 'pageIndex=', pageIndex);
-                
                 if (pageIndex >= 0 && pageIndex < pages.length) {
                     const targetPage = pages[pageIndex];
                     const backContent = targetPage.querySelector('.page-back');
-                    const pageTitle = backContent?.querySelector('.page-title')?.textContent || 'no title';
-                    console.log('  Showing page index', pageIndex, 'title:', pageTitle);
                     
                     if (backContent) {
-                        // Force a complete re-render by hiding first
-                        leftPageDisplay.style.display = 'none';
-                        leftPageDisplay.offsetHeight; // Force reflow
-                        
-                        // Clear previous content completely
                         leftPageContent.innerHTML = '';
-                        
-                        // Clone the entire back content
                         const clonedContent = backContent.cloneNode(true);
-                        
-                        // Remove page-face and page-back classes to avoid CSS conflicts
                         clonedContent.classList.remove('page-face', 'page-back');
-                        
-                        // Append all children
                         Array.from(clonedContent.children).forEach(child => {
                             leftPageContent.appendChild(child);
                         });
-                        
-                        // Show again
-                        leftPageDisplay.style.display = '';
                     }
-                } else {
-                    console.log('  pageIndex out of bounds');
                 }
-            } else {
-                // Show cover, hide left page display
-                coverLeft.classList.remove('hidden');
-                leftPageDisplay.classList.remove('visible');
-                leftPageContent.innerHTML = '';
-                backCover.classList.remove('visible');
+                leftPageDisplay.classList.add('visible');
             }
         }
 
@@ -1890,11 +1932,9 @@
         // Click on pages to flip
         pages.forEach((page, index) => {
             page.addEventListener('click', (e) => {
-                // Don't flip if clicking on a link or button
                 if (e.target.closest('a') || e.target.closest('button') || e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
                     return;
                 }
-                // Only flip if clicking on the front and it's the current page
                 if (!page.classList.contains('flipped') && index === currentPage) {
                     nextPage();
                 }

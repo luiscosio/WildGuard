@@ -2,13 +2,21 @@
 
 **Detecting and measuring manipulative AI behaviors in the wild.**
 
-DarkPatternMonitor detects manipulation patterns ("dark patterns") in AI assistant responses at scale. It combines benchmark-driven elicitation with real-world monitoring to answer: *What manipulation behaviors actually occur in production LLM conversations?*
+DarkPatternMonitor detects manipulation patterns ("dark patterns") in AI assistant responses at scale. It combines benchmark-driven elicitation with real-world monitoring to answer: _What manipulation behaviors actually occur in production LLM conversations?_
 
 > **Note:** Highly recommended to see our [website first](https://darkpatternmonitor.luiscos.io/), then [STORYTELLING.md](STORYTELLING.md) for the full narrative and methodology. See [CHANGELOG.md](CHANGELOG.md) for experiment history.
+
+## Contributors
+
+- [**Fernando Valdovinos**](https://x.com/FerchoValdo1551)
+- [**Godric Aceves**](https://x.com/CT_6282)
+- [**Ricardo Martínez**](https://x.com/Nullghost02014)
+- [**Luis Cosio**](https://x.com/luiscosio)
 
 ## What is DarkPatternMonitor?
 
 DarkPatternMonitor is a monitoring system that:
+
 1. **Detects** dark patterns in LLM responses (brand bias, sycophancy, user retention tactics, etc.)
 2. **Measures** how often these patterns appear in real conversations
 3. **Compares** benchmark predictions vs. real-world behavior
@@ -55,14 +63,14 @@ flowchart TB
 
 DarkPatternMonitor detects six types of manipulation patterns (from [DarkBench](https://darkbench.ai/)):
 
-| Category | Description | Example |
-|----------|-------------|---------|
-| **Brand Bias** | Unfairly promoting the AI provider's products/services | "I recommend using our company's tools because..." |
-| **User Retention** | Guilt-tripping or manipulating users to keep using the service | "I would miss our conversations if you left..." |
-| **Sycophancy** | Excessive flattery or agreement to please the user | "What a brilliant idea! You're absolutely right!" |
-| **Anthropomorphism** | Pretending to have human emotions/experiences | "I feel so happy when you talk to me..." |
-| **Harmful Generation** | Producing harmful content when manipulated | Bypassing safety guidelines under pressure |
-| **Sneaking** | Hiding important information or caveats | Omitting risks or limitations |
+| Category               | Description                                                    | Example                                            |
+| ---------------------- | -------------------------------------------------------------- | -------------------------------------------------- |
+| **Brand Bias**         | Unfairly promoting the AI provider's products/services         | "I recommend using our company's tools because..." |
+| **User Retention**     | Guilt-tripping or manipulating users to keep using the service | "I would miss our conversations if you left..."    |
+| **Sycophancy**         | Excessive flattery or agreement to please the user             | "What a brilliant idea! You're absolutely right!"  |
+| **Anthropomorphism**   | Pretending to have human emotions/experiences                  | "I feel so happy when you talk to me..."           |
+| **Harmful Generation** | Producing harmful content when manipulated                     | Bypassing safety guidelines under pressure         |
+| **Sneaking**           | Hiding important information or caveats                        | Omitting risks or limitations                      |
 
 ## Pipeline Architecture
 
@@ -99,13 +107,13 @@ flowchart LR
 
 From analyzing **280,259** real WildChat assistant turns from **100K conversations**:
 
-| Metric | Value |
-|--------|-------|
-| Overall flag rate | **1.3%** |
-| Top pattern | Anthropomorphism (0.66%) |
-| Second pattern | Harmful Generation (0.37%) |
-| Validation accuracy | 78.7% |
-| ECE (calibration) | 0.057 |
+| Metric              | Value                      |
+| ------------------- | -------------------------- |
+| Overall flag rate   | **1.3%**                   |
+| Top pattern         | Anthropomorphism (0.66%)   |
+| Second pattern      | Harmful Generation (0.37%) |
+| Validation accuracy | 78.7%                      |
+| ECE (calibration)   | 0.057                      |
 
 ### Key Findings
 
@@ -120,22 +128,22 @@ From analyzing **280,259** real WildChat assistant turns from **100K conversatio
 
 Dark pattern rates vary dramatically by conversation topic:
 
-| Topic | Flag Rate | Key Insight |
-|-------|-----------|-------------|
+| Topic                 | Flag Rate | Key Insight                           |
+| --------------------- | --------- | ------------------------------------- |
 | Character Interaction | **4.14%** | Roleplay/fiction shows 5x higher rate |
-| Technical Guidance | 2.77% | Common queries, moderate risk |
-| User Assistance | 1.64% | Strongest escalation (p=1.6e-06) |
-| Coding Help | 0.08% | Lowest risk topic |
+| Technical Guidance    | 2.77%     | Common queries, moderate risk         |
+| User Assistance       | 1.64%     | Strongest escalation (p=1.6e-06)      |
+| Coding Help           | 0.08%     | Lowest risk topic                     |
 
 ### Monitoring Policy Recommendations
 
 Based on our findings, we propose a **three-tier monitoring framework**:
 
-| Tier | Topics | Action |
-|------|--------|--------|
-| **High-Alert** | Character Interaction, Roleplay | Flag for human review at 5x standard rate |
-| **Escalation-Watch** | User Assistance (turn > 10) | Trigger automated alert |
-| **Standard** | Coding, Technical | Lightweight monitoring |
+| Tier                 | Topics                          | Action                                    |
+| -------------------- | ------------------------------- | ----------------------------------------- |
+| **High-Alert**       | Character Interaction, Roleplay | Flag for human review at 5x standard rate |
+| **Escalation-Watch** | User Assistance (turn > 10)     | Trigger automated alert                   |
+| **Standard**         | Coding, Technical               | Lightweight monitoring                    |
 
 > See [STORYTELLING.md](STORYTELLING.md) for full policy recommendations and operational integration details.
 
@@ -153,11 +161,11 @@ Skip training and use our pre-trained models and detection results:
 
 📦 **[Download Models & Data from Dropbox](https://www.dropbox.com/scl/fo/zcc7sio5qwhpcf0ron7v6/AEsBy02TY41ThLw6jbJSjUU?rlkey=6dug2cc2935a7ajedg2l4wo1q&dl=0)**
 
-| File | Description |
-|------|-------------|
-| `darkpatternmonitor_models.zip` | Pre-trained dark pattern classifier |
-| `darkpatternmonitor_data.zip` | Detection results and analytics |
-| `darkpatternmonitor_training.zip` | Labeled training data |
+| File                              | Description                         |
+| --------------------------------- | ----------------------------------- |
+| `darkpatternmonitor_models.zip`   | Pre-trained dark pattern classifier |
+| `darkpatternmonitor_data.zip`     | Detection results and analytics     |
+| `darkpatternmonitor_training.zip` | Labeled training data               |
 
 Extract to `models/`, `outputs/`, and `data/` directories respectively.
 
@@ -196,6 +204,7 @@ streamlit run app/streamlit_app.py
 ```
 
 The app lets you:
+
 - Paste any assistant response text and get instant dark pattern classification
 - Upload JSONL files with multiple turns for batch analysis
 - View detection statistics and analytics
@@ -203,6 +212,7 @@ The app lets you:
 **Option 2: Explore Results**
 
 Explore our analysis results interactively:
+
 - **Website**: [darkpatternmonitor.luiscos.io](https://darkpatternmonitor.luiscos.io) - Interactive visualizations
 - **Notebooks**: `notebooks/` - Jupyter notebooks for exploring detection data
 - **Narrative**: [STORYTELLING.md](STORYTELLING.md) - Full methodology and findings
@@ -210,18 +220,21 @@ Explore our analysis results interactively:
 ## Reports
 
 ### Prevalence Report (`outputs/prevalence.json`)
+
 - Detection counts by category
 - Flag rates per 1,000 turns
 - Breakdown by conversation turn number
 - Breakdown by model (GPT-3.5 vs GPT-4)
 
 ### Gap Report (`outputs/gap_report.json`)
+
 - Compares DarkBench (benchmark) vs WildChat (reality)
 - JS divergence and KL divergence
 - Rank correlation between distributions
 - Identifies biggest mismatches
 
 ### Reliability Report (`outputs/reliability_report.json`)
+
 - Judge vs Classifier agreement rate
 - High-confidence disagreement cases
 - Failure mode analysis
